@@ -1,52 +1,71 @@
+/* General body styling */
 body {
-  font-family: sans-serif;
-  margin: 0;
-  padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #000080; /* Navy blue background for the entire page */
+    color: white; /* Default text color is white */
+    margin: 0;
+    padding: 0;
 }
 
+/* Header styling */
 header {
-  background-color: #f1f1f1;
-  padding: 20px;
+    background-color: #FFA500; /* Orange background for header */
+    color: white;
+    padding: 20px;
+    text-align: center;
 }
 
-h1, h2 {
-  margin: 0;
-}
-
-nav {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  justify-content: space-between;
-}
-
-nav li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
+/* Navigation links styling */
 nav a {
-  text-decoration: none;
-  color: black;
+    margin: 0 15px;
+    text-decoration: none;
+    color: white; /* White text for navigation links */
+    font-weight: bold;
 }
 
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Main content styling */
 main {
-  padding: 20px;
+    padding: 20px;
+    background-color: #ffffff; /* White background for main content area */
+    color: #000080; /* Navy blue text color */
+    border-radius: 5px;
+    max-width: 800px;
+    margin: 20px auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-section {
-  margin-bottom: 20px;
+main p {
+    line-height: 1.6;
+    margin-bottom: 1em;
+    font-size: 1rem;
 }
 
-img {
-  width: 200px;
-  height: 200px;
-  margin: 10px;
+/* Link styling within the main content */
+main a {
+    color: #FFA500; /* Orange color for links in the main content */
+    text-decoration: underline;
 }
 
+main a:hover {
+    text-decoration: none;
+}
+
+/* Footer styling */
 footer {
-  text-align: center;
-  padding: 10px;
-  background-color: #f1f1f1;
+    background-color: #FFA500; /* Orange background for footer */
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Ensure the footer doesn't overlap with the main content */
+body {
+    padding-bottom: 60px; /* Adjust padding to ensure content is not overlapped by footer */
 }
