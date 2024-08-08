@@ -65,7 +65,33 @@ footer {
     width: 100%;
 }
 
+footer ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+footer li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: #ccc;
+}
+
+footer i {
+    font-size: 24px;
+    margin-right: 10px;
+}
+
 /* Ensure the footer doesn't overlap with the main content */
+
 body {
     padding-bottom: 60px; /* Adjust padding to ensure content is not overlapped by footer */
 }
