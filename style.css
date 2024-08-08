@@ -15,6 +15,51 @@ header {
     text-align: center;
 }
 
+@media only screen and (max-width: 600px) {
+    header {
+        position: relative;
+    }
+    .menu-bar {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #FFA500;
+        padding: 10px;
+        cursor: pointer;
+    }
+    .menu-bar span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background-color: #fff;
+        margin-bottom: 5px;
+    }
+    .menu-bar span:last-child {
+        margin-bottom: 0;
+    }
+    nav {
+        display: none;
+        position: absolute;
+        top: 40px;
+        left: 0;
+        background-color: #fff;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+    }
+    nav a {
+        display: block;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+    }
+    nav a:hover {
+        background-color: #f0f0f0;
+    }
+    .menu-bar:hover + nav {
+        display: block;
+    }
+}
+
 /* Navigation links styling */
 nav a {
     margin: 0 15px;
