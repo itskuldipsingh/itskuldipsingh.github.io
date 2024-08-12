@@ -64,7 +64,7 @@ header {
 nav a {
     margin: 0 15px;
     text-decoration: none;
-    color: white; /* White text for navigation links */
+    color: blue; /* White text for navigation links */
     font-weight: bold;
 }
 
