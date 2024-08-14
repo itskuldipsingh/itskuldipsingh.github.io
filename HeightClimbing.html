@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aptitude</title>
+    <div include-html="header.html" id="header_file"></div>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+  <body>
+    <h1>Height Climbing Calculator</h1>
+    <br>
+    <br>
+    
+    <div>
+        <label for="height">ऊंचाई (मीटर):</label>
+        <input type="number" id="height" placeholder="ऊंचाई दर्ज करें">
+    </div>
+
+    <div>
+        <label for="climb">एक मिनट में चढ़ाई (मीटर):</label>
+        <input type="number" id="climb" placeholder="चढ़ाई दर्ज करें">
+    </div>
+
+    <div>
+        <label for="slip">अगले एक मिनट में फिसलन (मीटर):</label>
+        <input type="number" id="slip" placeholder="फिसलन दर्ज करें">
+    </div>
+
+    <button onclick="calculateTime()">Calculate</button>
+
+    <p id="result"></p>
+
+    <script>
+        function calculateTime() {
+            var height = parseInt(document.getElementById("height").value);
+            var climb = parseInt(document.getElementById("climb").value);
+            var slip = parseInt(document.getElementById("slip").value);
+
+            if (isNaN(height) || isNaN(climb) || isNaN(slip) || height <= 0 || climb <= 0 || slip < 0) {
+                document.getElementById("result").innerHTML = "कृपया सभी मान्य मान दर्ज करें।";
+                return;
+            }
+
+            var time = 0;
+            var currentHeight = 0;
+
+            while (currentHeight < height) {
+                time++;
+                currentHeight += climb;
+                if (currentHeight >= height) {
+                    break;
+                }
+                currentHeight -= slip;
+            }
+
+            document.getElementById("result").innerHTML = "ऊपर पहुंचने में कुल समय: " + time + " मिनट";
+        }
+    </script>
+
+    <hr>
+    <p>
+        किसी व्यक्ति /बिल्ली/बन्दर या किसी अन्य जीव द्वारा पेड़ या खम्बे पर चढ़ते समय यदि वह पहले मिनट कुछ उच्चाई चढ़ता है और अगले मिनट कुछ उच्चाई से फिसल कर नीचे आ जाता है तो उसके द्वारा सबसे उच्चाई पर पहुंचने में लगे समय को इस वेबसाइट द्वारा आसानी से ज्ञात कर सकते है।
+    </p>
+    <!-- Footer -->
+    <div include-html="footer.html" id="footer_file"></div>
+    
+    <script src="jquery-3.6.0.min.js"></script>
+    <script src="include-html.min.js"></script>
+</body>
+</html>
