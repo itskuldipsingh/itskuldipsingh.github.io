@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Polygon Diagonals Calculator</title>
+    <div include-html="header.html" id="header_file"></div>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Main content -->
+    <main>
+    <h2>Polygon Diagonals Calculator </h2>
+    <script>
+    function calculateDiagonals() {
+      var n = parseInt(document.getElementById("numSides").value);
+      var diagonals = (n * (n - 3)) / 2;
+      document.getElementById("result").innerHTML = n + " भुजाओं के बहुभुज के लिए विकर्णों की संख्या = " + diagonals;
+
+      // Call drawPolygon function
+      drawPolygon();
+    }
+
+    function drawPolygon() {
+      const numSides = parseInt(document.getElementById('numSides').value);
+      const svg = document.getElementById('svg');
+      const svgNS = "http://www.w3.org/2000/svg";
+
+      while (svg.firstChild) {
+        svg.firstChild.remove();
+      }
+
+      const centerX = 250;
+      const centerY = 250;
+      const radius = 100;
+      const angle = (2 * Math.PI) / numSides;
+
+      for (let i = 0; i < numSides; i++) {
+        const x1 = centerX + radius * Math.cos(i * angle);
+        const y1 = centerY + radius * Math.sin(i * angle);
+
+        for (let j = i+1; j < numSides; j++) {
+          const x2 = centerX + radius * Math.cos(j * angle);
+          const y2 = centerY + radius * Math.sin(j * angle);
+
+          const line = document.createElementNS(svgNS, 'line');
+          line.setAttribute('x1', x1);
+          line.setAttribute('y1', y1);
+          line.setAttribute('x2', x2);
+          line.setAttribute('y2', y2);
+          line.setAttribute('stroke', 'black');
+          line.setAttribute('stroke-width', '1');
+
+          svg.appendChild(line);
+        }
+      }
+    }
+  </script>
+  <label for="numSides">भुजाओं की संख्या दर्ज करें:</label>
+  <input type="text" id="numSides"><br><br>
+  <button onclick="calculateDiagonals()">गणना और चित्रण</button>
+  <div id="result"></div>
+  <br>
+  <svg id="svg" width="500" height="500"></svg>
+  <hr>
+    <h2> सूत्र </h2>
+      <p> किसी बहुभुज के लिए विकर्णों की संख्या = (n - 3)*(n / 2) <br> जहाँ n = भुजाओं की संख्या है.</p>
+      <p>किसी बहुभुज के लिए विकर्णों की संख्या को निम्नलिखित सूत्र से ज्ञात कर सकते है&nbsp;</p>
+      <p style="text-align: center;">विकर्ण = (n - 3)*(n / 2)</p><p style="text-align: left;">जहाँ n = भुजाओं की संख्या है।&nbsp;</p>
+      <p style="text-align: left;"><b>उदाहरण :</b></p>
+      <p><i><b>त्रिभुज में विकर्णों की संख्या</b></i>&nbsp;</p>
+      <p style="text-align: center;">n = 3</p>
+      <p style="text-align: center;"><span style="text-align: left;">विकर्णों की संख्या</span>&nbsp;= (n - 3)*(n / 2)</p>
+      <p style="text-align: center;">= (3 - 3) * (3 / 2)&nbsp;</p>
+      <p style="text-align: center;">= 0</p>
+      <p><br /></p><p><b><i>चतुर्भुज</i></b>&nbsp;<i><b>में विकर्णों की संख्या</b></i>&nbsp;</p>
+      <p style="text-align: center;">n = 4</p>
+      <p style="text-align: center;">विकर्णों की संख्या&nbsp;<span style="text-align: center;">= (n - 3)*(n / 2)</span></p>
+      <p style="text-align: center;">= (4 - 3) * (4 / 2)&nbsp;</p>
+      <p style="text-align: center;">= 2</p>
+      <p><br /></p>
+      <p><i><b>पंचभुज</b></i>&nbsp;<i><b>में विकर्णों की संख्या</b></i></p>
+      <p style="text-align: center;">n = 5</p>
+      <p style="text-align: center;">विकर्णों की संख्या&nbsp;<span style="text-align: center;">= (n - 3)*(n / 2)</span></p>
+      <p style="text-align: center;">= (5 - 3) * (5 / 2)&nbsp;</p>
+      <p style="text-align: center;">= 5</p><p><br /></p><p><b><i>
+  </main>
+
+    <!-- Footer -->
+    <div include-html="footer.html" id="footer_file"></div>
+    <script src="jquery-3.6.0.min.js"></script>
+    <script src="include-html.min.js"></script>
+</body>
+</html>
