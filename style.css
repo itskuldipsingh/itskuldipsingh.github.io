@@ -87,7 +87,7 @@ main {
 
 main iframe {
   width: 100%; /* Make the iframe width match the main tag width */
-  height: 100%; /* Make the iframe height match the main tag height */
+  height: 100vh; /* Make the iframe height match the main tag height */
   border: none; /* Remove the iframe border */
   padding: 0; /* Remove any padding from the iframe */
   margin: 0; /* Remove any margin from the iframe */
