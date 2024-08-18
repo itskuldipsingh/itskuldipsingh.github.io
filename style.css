@@ -72,15 +72,26 @@ nav a:hover {
     text-decoration: underline;
 }
 
+
 /* Main content styling */
 main {
-    padding: 20px;
-    background-color: #ffffff; /* White background for main content area */
-    color: #000080; /* Navy blue text color */
-    border-radius: 5px;
-    max-width: 800px;
-    margin: 20px auto;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative; /* Add this to ensure the iframe is positioned relative to the main tag */
+  padding: 20px; /* Keep the padding for the main tag */
+  background-color: #ffffff; /* Keep the background color for the main tag */
+  color: #000080; /* Keep the text color for the main tag */
+  border-radius: 5px; /* Keep the border radius for the main tag */
+  max-width: 800px; /* Keep the max width for the main tag */
+  margin: 20px auto; /* Keep the margin for the main tag */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Keep the box shadow for the main tag */
+}
+
+main iframe {
+  width: 100%; /* Make the iframe width match the main tag width */
+  height: 100%; /* Make the iframe height match the main tag height */
+  border: none; /* Remove the iframe border */
+  padding: 0; /* Remove any padding from the iframe */
+  margin: 0; /* Remove any margin from the iframe */
+  display: block; /* Make the iframe a block element */
 }
 
 main p {
