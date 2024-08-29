@@ -13,21 +13,31 @@ header {
     color: blue;
     padding: 20px;
     text-align: center;
+    position: relative; /* Position relative for positioning the menu icon */
 }
 
+/* Menu bar styling */
+.menu-bar {
+    display: none; /* Initially hide the menu bar */
+}
+
+/* Media query for mobile view */
 @media only screen and (max-width: 600px) {
     header {
         position: relative;
     }
+    
     .menu-bar {
-        display: block;
+        display: block; /* Show the menu bar icon in mobile view */
         position: absolute;
-        top: 0;
-        left: 0;
+        top: 20px;
+        left: 20px;
         background-color: #FFA500;
         padding: 10px;
         cursor: pointer;
+        z-index: 1000; /* Ensure it appears above other elements */
     }
+    
     .menu-bar span {
         display: block;
         width: 20px;
@@ -35,28 +45,38 @@ header {
         background-color: #fff;
         margin-bottom: 5px;
     }
+    
     .menu-bar span:last-child {
         margin-bottom: 0;
     }
+    
     nav {
-        display: none;
+        display: none; /* Hide the navigation by default */
         position: absolute;
-        top: 40px;
+        top: 60px; /* Adjust top position based on header height */
         left: 0;
-        background-color: #fff;
+        width: 100%;
+        background-color: #FFA500;
         padding: 10px;
         border-bottom: 1px solid #ccc;
+        z-index: 999; /* Ensure it appears above other content */
     }
+    
+    nav.active {
+        display: block; /* Show the navigation when the menu bar is active */
+    }
+    
     nav a {
         display: block;
         padding: 10px;
         border-bottom: 1px solid #ccc;
+        color: #fff; /* White text for navigation links */
+        text-decoration: none;
     }
+    
     nav a:hover {
         background-color: #f0f0f0;
-    }
-    .menu-bar:hover + nav {
-        display: block;
+        color: #000080; /* Change text color on hover */
     }
 }
 
@@ -72,26 +92,25 @@ nav a:hover {
     text-decoration: underline;
 }
 
-
 /* Main content styling */
 main {
-  position: relative; /* Add this to ensure the iframe is positioned relative to the main tag */
-  padding: 20px; /* Keep the padding for the main tag */
-  background-color: #ffffff; /* Keep the background color for the main tag */
-  color: #000080; /* Keep the text color for the main tag */
-  border-radius: 5px; /* Keep the border radius for the main tag */
-  max-width: 800px; /* Keep the max width for the main tag */
-  margin: 20px auto; /* Keep the margin for the main tag */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Keep the box shadow for the main tag */
+    position: relative;
+    padding: 20px;
+    background-color: #ffffff;
+    color: #000080;
+    border-radius: 5px;
+    max-width: 800px;
+    margin: 20px auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 main iframe {
-  width: 100%; /* Make the iframe width match the main tag width */
-  height: 100vh; /* Make the iframe height match the main tag height */
-  border: none; /* Remove the iframe border */
-  padding: 0; /* Remove any padding from the iframe */
-  margin: 0; /* Remove any margin from the iframe */
-  display: block; /* Make the iframe a block element */
+    width: 100%;
+    height: 100vh;
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: block;
 }
 
 main p {
@@ -102,8 +121,8 @@ main p {
 
 /* Link styling within the main content */
 main a {
-    color: #FFA500; /* Orange color for links in the main content */
-    text-decoration: underline;
+    color: #0f0a00;
+    text-decoration: none;
 }
 
 main a:hover {
@@ -116,12 +135,12 @@ footer {
     color: white;
     text-align: center;
     padding: 10px 0;
-    position: fixed;
-    bottom: 0;
     width: 100%;
+    position: static; /* Footer will scroll with the content */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow at the top of the footer */
 }
 
-footer ul{
+footer ul {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -135,6 +154,7 @@ footer li {
 footer a {
     color: #fff;
     text-decoration: none;
+    font-size: 24px; /* Adjust size to fit your design */
 }
 
 footer a:hover {
@@ -142,12 +162,8 @@ footer a:hover {
 }
 
 footer i {
-    font-size: 24px;
+    font-size: 24px; /* Adjust size of the icons */
     margin-right: 10px;
+    vertical-align: middle; /* Vertically center the icons */
 }
 
-/* Ensure the footer doesn't overlap with the main content */
-
-body {
-    padding-bottom: 60px; /* Adjust padding to ensure content is not overlapped by footer */
-}
