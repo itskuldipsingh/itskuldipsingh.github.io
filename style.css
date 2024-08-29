@@ -1,64 +1,173 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <title>Kuldip Singh</title>
-    <div include-html="header.html" id="header_file"></div>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <!-- Main content -->
-    <main>
-            <h1>Height Climbing Calculator</h1>
-            <br>
-            <br>
-            <div>
-                <label for="height">ऊंचाई (मीटर):</label>
-                <input type="number" id="height" placeholder="ऊंचाई दर्ज करें">
-            </div><br>
-            <div>
-                <label for="climb">एक मिनट में चढ़ाई (मीटर):</label>
-                <input type="number" id="climb" placeholder="चढ़ाई दर्ज करें">
-            </div><br>
-            <div>
-                <label for="slip">अगले एक मिनट में फिसलन (मीटर):</label>
-                <input type="number" id="slip" placeholder="फिसलन दर्ज करें">
-            </div><br>
-            <button onclick="calculateTime()">Calculate</button>
-            <p id="result"></p>
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #000080; /* Navy blue background for the entire page */
+    color: white; /* Default text color is white */
+    margin: 0;
+    padding: 0;
+}
 
-            <script>
-                function calculateTime() {
-                    var height = parseInt(document.getElementById("height").value);
-                    var climb = parseInt(document.getElementById("climb").value);
-                    var slip = parseInt(document.getElementById("slip").value);
-                    if (isNaN(height) || isNaN(climb) || isNaN(slip) || height <= 0 || climb <= 0 || slip < 0) {
-                        document.getElementById("result").innerHTML = "कृपया सभी मान्य मान दर्ज करें।";
-                        return;
-                    }
-                    var time = 0;
-                    var currentHeight = 0;
-                    while (currentHeight < height) {
-                        time++;
-                        currentHeight += climb;
-                        if (currentHeight >= height) {
-                            break;
-                        }
-                        currentHeight -= slip;
-                    }
-                    document.getElementById("result").innerHTML = "ऊपर पहुंचने में कुल समय: " + time + " मिनट";
-                }
-            </script>
-            <hr>
-            <p>किसी व्यक्ति /बिल्ली/बन्दर या किसी अन्य जीव द्वारा पेड़ या खम्बे पर चढ़ते समय यदि वह पहले मिनट कुछ उच्चाई चढ़ता है और अगले मिनट कुछ उच्चाई से फिसल कर नीचे आ जाता है तो सबसे उच्चाई पर पहुंचने में लगे समय को आसानी से ज्ञात कर सकते है।</p>
+/* Header styling */
+header {
+    background-color: #FFA500; /* Orange background for header */
+    color: blue;
+    padding: 20px;
+    text-align: center;
+    position: relative; /* Position relative for positioning the menu icon */
+}
+
+/* Menu bar styling */
+.menu-bar {
+    display: none; /* Initially hide the menu bar */
+}
+
+/* Media query for mobile view */
+@media only screen and (max-width: 600px) {
+    header {
+        position: relative;
+    }
     
-    </main>
+    .menu-bar {
+        display: block; /* Show the menu bar icon in mobile view */
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background-color: #FFA500;
+        padding: 10px;
+        cursor: pointer;
+        z-index: 1000; /* Ensure it appears above other elements */
+    }
+    
+    .menu-bar span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background-color: #fff;
+        margin-bottom: 5px;
+    }
+    
+    .menu-bar span:last-child {
+        margin-bottom: 0;
+    }
+    
+    nav {
+        display: none; /* Hide the navigation by default */
+        position: absolute;
+        top: 60px; /* Adjust top position based on header height */
+        left: 0;
+        width: 100%;
+        background-color: #FFA500;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+        z-index: 999; /* Ensure it appears above other content */
+    }
+    
+    nav.active {
+        display: block; /* Show the navigation when the menu bar is active */
+    }
+    
+    nav a {
+        display: block;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+        color: #fff; /* White text for navigation links */
+        text-decoration: none;
+    }
+    
+    nav a:hover {
+        background-color: #f0f0f0;
+        color: #000080; /* Change text color on hover */
+    }
+}
 
-    <!-- Footer -->
-    <div include-html="footer.html" id="footer_file"></div>
-    <script src="jquery-3.6.0.min.js"></script>
-    <script src="include-html.min.js"></script>
-</body>
-</html>
+/* Navigation links styling */
+nav a {
+    margin: 0 15px;
+    text-decoration: none;
+    color: blue; /* White text for navigation links */
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Main content styling */
+main {
+    position: relative;
+    padding: 20px;
+    background-color: #ffffff;
+    color: black;
+    border-radius: 5px;
+    max-width: 800px;
+    margin: 20px auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+main iframe {
+    width: 100%;
+    height: 100vh;
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: block;
+}
+
+main p {
+    line-height: 1.6;
+    margin-bottom: 1em;
+    font-size: 1rem;
+}
+
+/* Link styling within the main content */
+main a {
+    color: blue;
+    text-decoration: none;
+}
+
+main a:hover {
+    text-decoration: none;
+}
+
+main img {
+    max-width: 100%; /* Ensure the image scales down with the viewport */
+    height: auto; /* Maintain aspect ratio */
+    border: 2px solid #333; /* Optional: add a border to the image */
+}
+/* Footer styling */
+footer {
+    background-color: #FFA500; /* Orange background for footer */
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+    position: static; /* Footer will scroll with the content */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow at the top of the footer */
+}
+
+footer ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+footer li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 24px; /* Adjust size to fit your design */
+}
+
+footer a:hover {
+    color: #ccc;
+}
+
+footer i {
+    font-size: 24px; /* Adjust size of the icons */
+    margin-right: 10px;
+    vertical-align: middle; /* Vertically center the icons */
+}
