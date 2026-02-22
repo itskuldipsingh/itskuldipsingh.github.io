@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Electrical Lab - Ohm's Law & Safety</title>
+    <style>
+        :root { --primary: #1a73e8; --danger: #d93025; --bg: #f8f9fa; --panel: #2c3e50; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Sidebar Controls */
+        .sidebar { width: 320px; background: var(--panel); color: white; padding: 20px; box-shadow: 2px 0 10px rgba(0,0,0,0.3); overflow-y: auto; }
+        .control-group { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #444; }
+        label { display: block; font-size: 14px; margin-bottom: 8px; color: #bdc3c7; }
+        input[type="range"] { width: 100%; margin-bottom: 5px; cursor: pointer; }
+        .val-badge { float: right; color: #f1c40f; font-weight: bold; }
+        
+        /* Main Lab Area */
+        .main { flex: 1; position: relative; padding: 20px; display: flex; flex-direction: column; }
+        .canvas-container { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); flex: 1; position: relative; border: 3px solid #ddd; }
+        canvas { width: 100%; height: 100%; border-radius: 18px; }
+
+        /* Calculator Display */
+        .meter-panel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+        .meter-card { background: #222; color: #0f0; padding: 15px; border-radius: 10px; text-align: center; border-bottom: 4px solid var(--primary); font-family: 'Courier New', monospace; }
+        .meter-card small { color: #888; display: block; font-size: 12px; margin-bottom: 5px; }
+        
+        .status-msg { position: absolute; top: 20px; left: 20px; padding: 10px 20px; border-radius: 5px; font-weight: bold; display: none; }
+        .btn-reset { background: var(--danger); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>🛠️ Lab Controls</h2>
+    
+    <div class="control-group">
+        <label>सप्लाई वोल्टेज (V): <span class="val-badge" id="v_val">12V</span></label>
+        <input type="range" id="v_range" min="0" max="100" value="12" oninput="updateCircuit()">
+    </div>
+
+    <div class="control-group">
+        <label>वेरिएबल रेजिस्टेंस (R): <span class="val-badge" id="r_val">10Ω</span></label>
+        <input type="range" id="r_range" min="1" max="100" value="10" oninput="updateCircuit()">
+    </div>
+
+    <div class="control-group">
+        <label>फ्यूज रेटिंग (Amp): <span class="val-badge" id="f_val">5A</span></label>
+        <input type="range" id="f_range" min="1" max="15" value="5" oninput="updateCircuit()">
+    </div>
+
+    <div class="control-group">
+        <label>मेन स्विच (Main Switch)</label>
+        <button class="btn-reset" id="sw_btn" style="background:#2ecc71" onclick="toggleSwitch()">SWITCH: ON</button>
+    </div>
+
+    <button class="btn-reset" onclick="resetLab()">🛠️ रिपेयर फ्यूज / रिसेट लैब</button>
+</div>
+
+<div class="main">
+    <div class="meter-panel">
+        <div class="meter-card"><small>VOLTAGE</small><span id="m_volt">0.00</span> V</div>
+        <div class="meter-card"><small>CURRENT</small><span id="m_curr">0.00</span> A</div>
+        <div class="meter-card"><small>RESISTANCE</small><span id="m_res">0.00</span> Ω</div>
+    </div>
+
+    <div class="canvas-container">
+        <div id="alert" class="status-msg"></div>
+        <canvas id="circuitCanvas"></canvas>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('circuitCanvas');
+    const ctx = canvas.getContext('2d');
+    let isSwitchOn = true;
+    let isFuseBlown = false;
+    let electrons = [];
+
+    function init() {
+        resize();
+        updateCircuit();
+        animate();
+    }
+
+    window.onresize = resize;
+    function resize() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+    }
+
+    function toggleSwitch() {
+        isSwitchOn = !isSwitchOn;
+        const btn = document.getElementById('sw_btn');
+        btn.innerText = isSwitchOn ? "SWITCH: ON" : "SWITCH: OFF";
+        btn.style.background = isSwitchOn ? "#2ecc71" : "#d93025";
+        updateCircuit();
+    }
+
+    function resetLab() {
+        isFuseBlown = false;
+        isSwitchOn = true;
+        document.getElementById('v_range').value = 12;
+        document.getElementById('alert').style.display = "none";
+        toggleSwitch(); toggleSwitch(); // Reset UI
+        updateCircuit();
+    }
+
+    function updateCircuit() {
+        const V = parseFloat(document.getElementById('v_range').value);
+        const R = parseFloat(document.getElementById('r_range').value);
+        const fuseLimit = parseFloat(document.getElementById('f_range').value);
+        
+        document.getElementById('v_val').innerText = V + "V";
+        document.getElementById('r_val').innerText = R + "Ω";
+        document.getElementById('f_val').innerText = fuseLimit + "A";
+
+        let current = (isSwitchOn && !isFuseBlown) ? V / R : 0;
+
+        // Fuse Blow Logic
+        if (current > fuseLimit) {
+            isFuseBlown = true;
+            current = 0;
+            const alert = document.getElementById('alert');
+            alert.innerText = "💥 FUSE BLOWN! (Current exceeded limit)";
+            alert.style.background = "#d93025";
+            alert.style.color = "white";
+            alert.style.display = "block";
+        }
+
+        // Meter Update
+        document.getElementById('m_volt').innerText = (isSwitchOn && !isFuseBlown ? V : 0).toFixed(2);
+        document.getElementById('m_curr').innerText = current.toFixed(2);
+        document.getElementById('m_res').innerText = R.toFixed(2);
+    }
+
+    function drawCircuit() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const w = 400, h = 250;
+        const x = centerX - w/2, y = centerY - h/2;
+
+        ctx.strokeStyle = "#333";
+        ctx.lineWidth = 4;
+
+        // 1. Draw Wires (Rectangular Path)
+        ctx.beginPath();
+        ctx.rect(x, y, w, h);
+        ctx.stroke();
+
+        // 2. Draw Battery (DC Source)
+        ctx.fillStyle = "white";
+        ctx.fillRect(x - 20, y + h/2 - 30, 40, 60);
+        ctx.strokeRect(x - 20, y + h/2 - 30, 40, 60);
+        ctx.fillStyle = "#333"; ctx.fillText("BATTERY", x-25, y+h/2+45);
+        ctx.fillRect(x-15, y+h/2-2, 30, 4); // Positive terminal
+
+        // 3. Draw Fuse
+        ctx.fillStyle = "white"; ctx.fillRect(x + w/4 - 20, y - 10, 40, 20);
+        ctx.strokeRect(x + w/4 - 20, y - 10, 40, 20);
+        if(!isFuseBlown) {
+            ctx.beginPath(); ctx.moveTo(x+w/4-15, y); ctx.lineTo(x+w/4+15, y); 
+            ctx.strokeStyle = "#e67e22"; ctx.stroke();
+        }
+        ctx.fillStyle = "#333"; ctx.fillText("FUSE", x+w/4-15, y-20);
+
+        // 4. Draw Switch
+        ctx.fillStyle = "white"; ctx.fillRect(x + w/2 - 20, y - 10, 40, 20);
+        ctx.beginPath();
+        ctx.moveTo(x+w/2-15, y);
+        if(isSwitchOn) ctx.lineTo(x+w/2+15, y); else ctx.lineTo(x+w/2+15, y-15);
+        ctx.strokeStyle = "#333"; ctx.stroke();
+        ctx.fillText("SWITCH", x+w/2-20, y-20);
+
+        // 5. Draw Variable Resistance (Rheostat)
+        ctx.fillStyle = "#eee"; ctx.fillRect(x + w - 30, y + h/2 - 40, 60, 80);
+        ctx.strokeRect(x + w - 30, y + h/2 - 40, 60, 80);
+        // Zigzag lines for resistance
+        ctx.beginPath();
+        for(let i=0; i<6; i++) {
+            ctx.lineTo(x+w-20 + (i%2*40), y+h/2-30 + (i*12));
+        }
+        ctx.stroke();
+        ctx.fillStyle = "#333"; ctx.fillText("RHEOSTAT", x+w-25, y+h/2+55);
+
+        // 6. Draw Bulb (Load)
+        const bulbX = x + w/2, bulbY = y + h;
+        ctx.beginPath();
+        ctx.arc(bulbX, bulbY, 25, 0, Math.PI * 2);
+        const V = parseFloat(document.getElementById('v_range').value);
+        const R = parseFloat(document.getElementById('r_range').value);
+        if(isSwitchOn && !isFuseBlown && V > 0) {
+            let brightness = Math.min(V/R * 20, 100);
+            ctx.fillStyle = `rgba(255, 255, 0, ${brightness/100})`;
+            ctx.shadowBlur = brightness/2;
+            ctx.shadowColor = "yellow";
+        } else {
+            ctx.fillStyle = "#eee";
+            ctx.shadowBlur = 0;
+        }
+        ctx.fill();
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = "#333"; ctx.fillText("BULB", bulbX-15, bulbY+40);
+    }
+
+    function animate() {
+        drawCircuit();
+        const V = parseFloat(document.getElementById('v_range').value);
+        const R = parseFloat(document.getElementById('r_range').value);
+        const current = (isSwitchOn && !isFuseBlown) ? V / R : 0;
+        
+        // Electron flow animation
+        if(current > 0) {
+            // Speed depends on current
+            let speed = current * 2;
+            // Draw small moving dots to show current direction
+        }
+        
+        requestAnimationFrame(animate);
+    }
+
+    init();
+</script>
+</body>
+</html>
