@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ohm's Law Simulator</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; text-align: center; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        canvas { background: #fafafa; border: 1px solid #ddd; border-radius: 8px; margin-top: 20px; }
+        .controls { display: flex; justify-content: space-around; padding: 20px; background: #eef2f7; border-radius: 10px; margin-bottom: 20px; }
+        .control-group { display: flex; flex-direction: column; align-items: center; width: 30%; }
+        input[type=range] { width: 100%; cursor: pointer; }
+        .value-display { font-size: 1.5rem; font-weight: bold; color: #1a73e8; margin-top: 5px; }
+        .formula-box { font-size: 1.8rem; margin: 20px 0; padding: 10px; border-top: 2px solid #eee; }
+        label { font-weight: 600; color: #444; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Ohm's Law Visual Simulator</h2>
+    <p>Adjust Voltage and Resistance to see how Current flow changes.</p>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>Voltage (V)</label>
+            <input type="range" id="volts" min="1" max="50" value="10">
+            <div class="value-display" id="vVal">10V</div>
+        </div>
+        <div class="control-group">
+            <label>Resistance (Ω)</label>
+            <input type="range" id="ohms" min="10" max="500" value="100">
+            <div class="value-display" id="rVal">100Ω</div>
+        </div>
+        <div class="control-group">
+            <label>Calculated Current (I)</label>
+            <div class="value-display" id="iVal" style="color: #d93025; font-size: 2rem;">0.10A</div>
+        </div>
+    </div>
+
+    <div class="formula-box">
+        <span id="formulaText">I = V / R &nbsp;⇒&nbsp; 10 / 100 = 0.10 Amps</span>
+    </div>
+
+    <canvas id="ohmCanvas" width="800" height="300"></canvas>
+</div>
+
+<script>
+    const canvas = document.getElementById('ohmCanvas');
+    const ctx = canvas.getContext('2d');
+    const vInput = document.getElementById('volts');
+    const rInput = document.getElementById('ohms');
+
+    let offset = 0; // For electron animation
+
+    function drawCircuit(V, R, I) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const width = 500;
+        const height = 150;
+        const left = centerX - width/2;
+        const right = centerX + width/2;
+        const top = centerY - height/2;
+        const bottom = centerY + height/2;
+
+        // 1. Draw Wires (Rectangular loop)
+        ctx.strokeStyle = "#333";
+        ctx.lineWidth = 4;
+        ctx.strokeRect(left, top, width, height);
+
+        // 2. Draw Battery (Voltage Source) on the left
+        ctx.fillStyle = "white";
+        ctx.fillRect(left - 20, centerY - 30, 40, 60);
+        ctx.strokeRect(left - 20, centerY - 30, 40, 60);
+        ctx.fillStyle = "#333";
+        ctx.font = "bold 16px Arial";
+        ctx.fillText("V", left - 8, centerY + 5);
+        
+        // 3. Draw Resistor on the right
+        ctx.fillStyle = "white";
+        ctx.fillRect(right - 10, centerY - 40, 20, 80);
+        ctx.strokeRect(right - 10, centerY - 40, 20, 80);
+        
+        // Zig-zag inside resistor
+        ctx.beginPath();
+        ctx.moveTo(right, centerY - 35);
+        for(let i=0; i<6; i++) {
+            ctx.lineTo(right + (i%2==0 ? 8 : -8), centerY - 25 + (i*10));
+        }
+        ctx.stroke();
+        ctx.fillText("R", right + 15, centerY + 5);
+
+        // 4. Animate Current (Electrons)
+        // Speed of animation depends on Current (I)
+        const speed = I * 20; 
+        offset += speed;
+        if (offset > 40) offset = 0;
+
+        ctx.fillStyle = "#FFD700"; // Electron color
+        const dotSpacing = 40;
+        
+        // Helper to draw moving dots along the path
+        function drawDotsOnLine(x1, y1, x2, y2) {
+            const dist = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+            for (let d = (offset % dotSpacing); d < dist; d += dotSpacing) {
+                const ratio = d / dist;
+                const dx = x1 + (x2 - x1) * ratio;
+                const dy = y1 + (y2 - y1) * ratio;
+                ctx.beginPath();
+                ctx.arc(dx, dy, 4 + (I * 5), 0, Math.PI * 2); // Size increases with Current
+                ctx.fill();
+            }
+        }
+
+        // Clockwise electron flow
+        drawDotsOnLine(left, centerY, left, top);    // Up
+        drawDotsOnLine(left, top, right, top);       // Right
+        drawDotsOnLine(right, top, right, centerY); // Down
+        drawDotsOnLine(right, centerY, right, bottom); // Down through R
+        drawDotsOnLine(right, bottom, left, bottom);  // Left
+        drawDotsOnLine(left, bottom, left, centerY);  // Up to battery
+    }
+
+    function update() {
+        const V = parseFloat(vInput.value);
+        const R = parseFloat(rInput.value);
+        const I = V / R;
+
+        document.getElementById('vVal').innerText = V + "V";
+        document.getElementById('rVal').innerText = R + "Ω";
+        document.getElementById('iVal').innerText = I.toFixed(2) + "A";
+        document.getElementById('formulaText').innerHTML = `I = V / R &nbsp;⇒&nbsp; ${V} / ${R} = <b>${I.toFixed(2)} Amps</b>`;
+
+        drawCircuit(V, R, I);
+        requestAnimationFrame(update);
+    }
+
+    update();
+</script>
+</body>
+</html>
