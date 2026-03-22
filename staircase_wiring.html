@@ -1,270 +1,288 @@
-import React, { useState } from 'react';
-import { 
-  Lightbulb, 
-  Zap, 
-  ShieldAlert, 
-  CheckCircle, 
-  ArrowRight, 
-  ArrowLeft, 
-  Cpu, 
-  Target, 
-  ListChecks, 
-  Table, 
-  Wrench,
-  Hammer
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staircase Wiring Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .section-card { display: none; }
+        .section-card.active { display: block; animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .switch-arm { transition: all 0.3s ease-in-out; transform-origin: center; }
+        .indicator-pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+        
+        /* Custom styles for Google Translate widget to keep header clean */
+        #google_translate_element {
+            margin-right: 10px;
+        }
+        .goog-te-gadget-simple {
+            background-color: rgba(255, 255, 255, 0.5) !important;
+            border: 1px solid #e2e8f0 !important;
+            padding: 4px 8px !important;
+            border-radius: 8px !important;
+            font-size: 12px !important;
+        }
+        .goog-te-banner-frame.skiptranslate { display: none !important; }
+        body { top: 0px !important; }
+    </style>
+</head>
+<body class="pb-20">
 
-const SECTIONS = ['aim', 'req', 'theory', 'demo', 'safety'];
+    <header class="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-slate-200 z-50 px-6 py-3 flex justify-between items-center shadow-sm">
+        <div class="flex flex-col">
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Simulation</span>
+            <span class="text-sm font-bold text-slate-800">Electrical Lab</span>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <div id="google_translate_element"></div>
+            <div class="flex gap-1.5" id="stepper-dots"></div>
+        </div>
+    </header>
 
-const ReferenceCircuitDiagram = ({ sw1, sw2, isLightOn }) => (
-  <svg viewBox="0 0 600 400" className="w-full h-auto bg-white rounded-2xl border-2 border-slate-200 shadow-inner p-6">
-    {/* Terminal Labels */}
-    <text x="40" y="55" className="text-[14px] font-bold fill-black">N (Neutral)</text>
-    <text x="40" y="255" className="text-[14px] font-bold fill-red-600">L (Phase)</text>
+    <main class="max-w-4xl mx-auto px-6 pt-24">
+        
+        <section id="aim" class="section-card active">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="p-3 bg-white rounded-2xl shadow-md text-red-500"><i class="fas fa-crosshairs fa-2x"></i></div>
+                <h2 class="text-4xl font-black text-slate-800">Aim</h2>
+            </div>
+            <div class="bg-white p-12 rounded-[2.5rem] shadow-xl border-l-[12px] border-red-500">
+                <p class="text-2xl text-slate-600 italic font-medium leading-relaxed">
+                    "To implement a staircase wiring system using two 2-way switches to control a single lamp from two separate locations."
+                </p>
+            </div>
+        </section>
 
-    {/* NEUTRAL WIRE (Black) - Directly connected to Left of Lamp */}
-    <path d="M 60 50 L 275 50" stroke="#000000" strokeWidth="4" fill="none" strokeLinecap="round" />
-    
-    {/* LAMP (Centered) */}
-    <g transform="translate(300, 50)">
-      <circle r="25" stroke="#1e293b" strokeWidth="2" fill={isLightOn ? "#fef08a" : "white"} />
-      <line x1="-15" y1="-15" x2="15" y2="15" stroke="#ef4444" strokeWidth="2" />
-      <line x1="15" y1="-15" x2="-15" y2="15" stroke="#ef4444" strokeWidth="2" />
-      <text x="0" y="45" textAnchor="middle" className="text-[10px] font-black fill-slate-600 uppercase tracking-widest">Load / Lamp</text>
-      {isLightOn && <circle r="25" fill="#facc15" opacity="0.4" className="animate-pulse" />}
-    </g>
+        <section id="req" class="section-card">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="p-3 bg-white rounded-2xl shadow-md text-red-500"><i class="fas fa-list-check fa-2x"></i></div>
+                <h2 class="text-4xl font-black text-slate-800">Requirements</h2>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-6" id="req-grid">
+            </div>
+        </section>
 
-    {/* PHASE RETURN WIRE (Red) - Connected to Right of Lamp to S2 COM */}
-    <path d="M 325 50 L 550 50 L 550 250 L 485 250" stroke="#ef4444" strokeWidth="4" fill="none" strokeLinecap="round" />
-
-    {/* PHASE INLET WIRE (Red) - Entering S1 COM */}
-    <path d="M 60 250 L 115 250" stroke="#ef4444" strokeWidth="4" fill="none" strokeLinecap="round" />
-
-    {/* SWITCH 1 */}
-    <g transform="translate(150, 250)">
-      <circle r="30" fill="none" stroke="#1e293b" strokeWidth="2" />
-      <circle cx="-35" cy="0" r="4" fill="#1e293b" /> 
-      <circle cx="15" cy="-15" r="4" fill="#1e293b" /> 
-      <circle cx="15" cy="15" r="4" fill="#1e293b" />
-      <line x1="-35" y1="0" x2="12" y2={sw1 === 'UP' ? -15 : 15} stroke="#1e293b" strokeWidth="5" strokeLinecap="round" className="transition-all duration-300" />
-      <text x="0" y="55" textAnchor="middle" className="text-[9px] font-bold fill-slate-900 uppercase">Two-Way S1</text>
-    </g>
-
-    {/* TRAVELER 1 (Red Path - Top) */}
-    <path d="M 165 235 L 165 150 L 435 150 L 435 235" stroke="#ef4444" strokeWidth="3" fill="none" />
-    {/* TRAVELER 2 (Red Path - Bottom) */}
-    <path d="M 165 265 L 230 265 L 230 220 L 370 220 L 370 265 L 435 265" stroke="#ef4444" strokeWidth="3" fill="none" />
-
-    {/* SWITCH 2 */}
-    <g transform="translate(450, 250)">
-      <circle r="30" fill="none" stroke="#1e293b" strokeWidth="2" />
-      <circle cx="35" cy="0" r="4" fill="#1e293b" /> 
-      <circle cx="-15" cy="-15" r="4" fill="#1e293b" /> 
-      <circle cx="-15" cy="15" r="4" fill="#1e293b" />
-      <line x1="35" y1="0" x2="-12" y2={sw2 === 'UP' ? -15 : 15} stroke="#1e293b" strokeWidth="5" strokeLinecap="round" className="transition-all duration-300" />
-      <text x="0" y="55" textAnchor="middle" className="text-[9px] font-bold fill-slate-900 uppercase">Two-Way S2</text>
-    </g>
-
-    {/* CURRENT DIRECTION ANIMATION */}
-    {isLightOn && (
-      <g>
-        <circle r="4" fill="#ffffff">
-           <animateMotion dur="2.5s" repeatCount="indefinite" path="M 60 250 L 115 250" />
-        </circle>
-        <circle r="4" fill="#ffffff">
-           <animateMotion 
-             dur="2.5s" 
-             repeatCount="indefinite" 
-             path={sw1 === 'UP' 
-               ? "M 115 250 L 165 235 L 165 150 L 435 150 L 435 235" 
-               : "M 115 250 L 165 265 L 230 265 L 230 220 L 370 220 L 370 265 L 435 265"} 
-           />
-        </circle>
-        <circle r="4" fill="#ffffff">
-           <animateMotion dur="2.5s" repeatCount="indefinite" path="M 435 235 L 485 250 L 550 250 L 550 50 L 325 50" />
-        </circle>
-        <circle r="3" fill="#94a3b8">
-           <animateMotion dur="2.5s" repeatCount="indefinite" path="M 275 50 L 60 50" />
-        </circle>
-      </g>
-    )}
-  </svg>
-);
-
-export default function App() {
-  const [idx, setIdx] = useState(0);
-  const [sw1, setSw1] = useState('UP');
-  const [sw2, setSw2] = useState('UP');
-
-  const section = SECTIONS[idx];
-  const isLightOn = sw1 === sw2;
-
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-12 font-sans selection:bg-red-100">
-      {/* Static Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm">
-        <h1 className="text-xs font-black text-slate-500 uppercase tracking-widest">Electrical Wiring Lab</h1>
-      </div>
-
-      <main className="max-w-4xl mx-auto px-6 py-24" id="main-content">
-        <header className="mb-12">
-          <h2 className="text-4xl font-black text-slate-800 flex items-center gap-4">
-             <span className="p-3 bg-white rounded-2xl shadow-md text-red-500">
-                {section === 'aim' && <Target size={32} />}
-                {section === 'req' && <ListChecks size={32} />}
-                {section === 'theory' && <Cpu size={32} />}
-                {section === 'demo' && <Zap size={32} />}
-                {section === 'safety' && <ShieldAlert size={32} />}
-             </span>
-             {section.charAt(0).toUpperCase() + section.slice(1)}
-          </h2>
-        </header>
-
-        {section === 'aim' && (
-          <div className="bg-white p-12 rounded-[2.5rem] shadow-xl border-l-[12px] border-red-500 animate-in fade-in slide-in-from-bottom-4">
-            <h3 className="text-xl font-black mb-4 uppercase text-slate-400 tracking-tight">Experiment Objective</h3>
-            <p className="text-2xl text-slate-600 italic font-medium leading-relaxed">
-              "To implement a staircase wiring system using two 2-way switches (SPDT) to control a single lamp from two separate locations."
-            </p>
-          </div>
-        )}
-
-        {section === 'req' && (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 animate-in fade-in zoom-in-95">
-            {[
-              { name: '2-Way Switch', spec: '6A, 250V', icon: 'switch' },
-              { name: 'Lamp Holder', spec: 'Pendent Type', icon: 'bulb' },
-              { name: 'PVC Copper Wire', spec: '1.5 sq mm', icon: 'wire' },
-              { name: 'Neon Tester', spec: '500V', icon: 'zap' },
-              { name: 'Insulated Plier', spec: 'Standard', icon: 'wrench' },
-              { name: 'Electric Hammer', spec: '250g', icon: 'hammer' }
-            ].map((item, i) => (
-              <div key={i} className="bg-white p-8 rounded-3xl shadow-lg border-2 border-transparent hover:border-red-400 transition-all text-center group">
-                <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                   {item.icon === 'bulb' ? <Lightbulb size={32} className="text-yellow-500" /> : <Zap size={32} className="text-red-500" />}
+        <section id="demo" class="section-card">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="p-3 bg-white rounded-2xl shadow-md text-red-500"><i class="fas fa-bolt fa-2x"></i></div>
+                <h2 class="text-4xl font-black text-slate-800">Demonstration</h2>
+            </div>
+            
+            <div class="bg-slate-950 p-6 rounded-[3rem] shadow-2xl relative border-[10px] border-slate-900 mb-10">
+                <div id="svg-container" class="w-full aspect-video"></div>
+                
+                <div class="flex justify-around mt-8 pb-4">
+                    <div class="text-center">
+                        <button onclick="toggleSwitch(1)" class="w-16 h-28 bg-slate-800 rounded-2xl border-4 border-slate-700 p-2 flex flex-col justify-between">
+                            <div id="sw1-up" class="w-full h-8 bg-white rounded-lg shadow-[0_0_15px_white] transition-all"></div>
+                            <div id="sw1-down" class="w-full h-8 bg-slate-950 opacity-40 rounded-lg transition-all"></div>
+                        </button>
+                        <p class="text-[10px] text-white font-black mt-3 uppercase">Switch 1</p>
+                    </div>
+                    <div class="text-center">
+                        <button onclick="toggleSwitch(2)" class="w-16 h-28 bg-slate-800 rounded-2xl border-4 border-slate-700 p-2 flex flex-col justify-between">
+                            <div id="sw2-up" class="w-full h-8 bg-white rounded-lg shadow-[0_0_15px_white] transition-all"></div>
+                            <div id="sw2-down" class="w-full h-8 bg-slate-950 opacity-40 rounded-lg transition-all"></div>
+                        </button>
+                        <p class="text-[10px] text-white font-black mt-3 uppercase">Switch 2</p>
+                    </div>
                 </div>
-                <h4 className="font-black text-slate-800 text-lg mb-1">{item.name}</h4>
-                <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest">{item.spec}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {section === 'theory' && (
-          <div className="bg-white p-10 rounded-[3rem] shadow-xl space-y-8 animate-in fade-in">
-            <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight">Circuit Wiring Logic</h3>
-            <p className="text-slate-600 leading-relaxed text-lg">
-              The Neutral wire is connected directly to the load (Lamp). The Phase wire enters the Common terminal of Switch 1. 
-              The two traveler terminals of Switch 1 are connected to the traveler terminals of Switch 2. 
-              Finally, the Common terminal of Switch 2 returns to the load, completing the circuit.
-            </p>
-            <div className="p-4 bg-slate-50 rounded-2xl border-2 border-slate-100 overflow-x-auto">
-                <ReferenceCircuitDiagram sw1={sw1} sw2={sw2} isLightOn={isLightOn} />
-            </div>
-          </div>
-        )}
-
-        {section === 'demo' && (
-          <div className="space-y-10 animate-in fade-in slide-in-from-bottom-8">
-            <div className="bg-slate-950 p-6 rounded-[3rem] shadow-2xl relative h-[520px] border-[10px] border-slate-900">
-               <div className="absolute inset-0 p-4 z-10 opacity-95">
-                 <ReferenceCircuitDiagram sw1={sw1} sw2={sw2} isLightOn={isLightOn} />
-               </div>
-
-               <div className="absolute bottom-6 left-1/4 -translate-x-1/2 z-20">
-                  <button onClick={() => setSw1(sw1 === 'UP' ? 'DOWN' : 'UP')} className={`w-20 h-32 rounded-3xl border-4 p-3 flex flex-col items-center justify-between transition-all ${sw1 === 'UP' ? 'bg-slate-700 border-slate-500 shadow-xl' : 'bg-slate-800 border-slate-900'}`}>
-                    <div className={`w-full h-10 rounded-xl transition-all ${sw1 === 'UP' ? 'bg-white shadow-[0_0_20px_white]' : 'bg-slate-950 opacity-40'}`} />
-                    <div className={`w-full h-10 rounded-xl transition-all ${sw1 === 'DOWN' ? 'bg-white shadow-[0_0_20px_white]' : 'bg-slate-950 opacity-40'}`} />
-                  </button>
-                  <p className="text-[10px] text-white font-black mt-4 uppercase text-center tracking-tighter">Switch 1 Position</p>
-               </div>
-
-               <div className="absolute bottom-6 right-1/4 translate-x-1/2 z-20">
-                  <button onClick={() => setSw2(sw2 === 'UP' ? 'DOWN' : 'UP')} className={`w-20 h-32 rounded-3xl border-4 p-3 flex flex-col items-center justify-between transition-all ${sw2 === 'UP' ? 'bg-slate-700 border-slate-500 shadow-xl' : 'bg-slate-800 border-slate-900'}`}>
-                    <div className={`w-full h-10 rounded-xl transition-all ${sw2 === 'UP' ? 'bg-white shadow-[0_0_20px_white]' : 'bg-slate-950 opacity-40'}`} />
-                    <div className={`w-full h-10 rounded-xl transition-all ${sw2 === 'DOWN' ? 'bg-white shadow-[0_0_20px_white]' : 'bg-slate-950 opacity-40'}`} />
-                  </button>
-                  <p className="text-[10px] text-white font-black mt-4 uppercase text-center tracking-tighter">Switch 2 Position</p>
-               </div>
             </div>
 
-            <div className="bg-white p-10 rounded-[2.5rem] shadow-xl">
-               <h3 className="text-xl font-black text-slate-800 mb-8 flex items-center gap-3 uppercase">
-                 <Table size={24} className="text-red-500" /> Switching Logic Table
-               </h3>
-               <div className="overflow-hidden rounded-2xl border-2 border-slate-100">
-                 <table className="w-full text-left">
-                   <thead className="bg-slate-50">
-                     <tr>
-                        {["Switch 1", "Switch 2", "Active Traveler", "Light State"].map((c, i) => <th key={i} className="p-5 text-xs font-black uppercase tracking-tighter text-slate-400">{c}</th>)}
-                     </tr>
-                   </thead>
-                   <tbody className="divide-y divide-slate-100">
-                      {[
-                        { s1: 'UP', s2: 'UP', path: 'Traveler 1 (Top)', status: 'ON' },
-                        { s1: 'UP', s2: 'DOWN', path: 'Open Circuit', status: 'OFF' },
-                        { s1: 'DOWN', s2: 'UP', path: 'Open Circuit', status: 'OFF' },
-                        { s1: 'DOWN', s2: 'DOWN', path: 'Traveler 2 (Bottom)', status: 'ON' },
-                      ].map((row, i) => {
-                        const active = sw1 === row.s1 && sw2 === row.s2;
-                        return (
-                          <tr key={i} className={`transition-all ${active ? 'bg-red-50 font-bold' : ''}`}>
-                            <td className="p-5 text-sm">{row.s1}</td>
-                            <td className="p-5 text-sm">{row.s2}</td>
-                            <td className="p-5 text-sm italic text-slate-400">{row.path}</td>
-                            <td className="p-5">
-                              <span className={`px-4 py-1 rounded-full text-[10px] font-black ${row.status === 'ON' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
-                                {row.status}
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                   </tbody>
-                 </table>
-               </div>
+            <div class="bg-white p-10 rounded-[2.5rem] shadow-xl">
+                <h3 class="text-xl font-black text-slate-800 mb-6 uppercase flex items-center gap-3">
+                    <i class="fas fa-table text-red-500"></i> Observation Table
+                </h3>
+                <table class="w-full text-left border-collapse rounded-2xl overflow-hidden border-2 border-slate-100">
+                    <thead class="bg-slate-50">
+                        <tr class="text-xs font-black uppercase text-slate-400">
+                            <th class="p-4">Switch 1</th>
+                            <th class="p-4">Switch 2</th>
+                            <th class="p-4">Lamp Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="obs-table-body" class="text-sm">
+                    </tbody>
+                </table>
             </div>
-          </div>
-        )}
+        </section>
 
-        {section === 'safety' && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-right-8">
-            <div className="bg-red-600 text-white p-10 rounded-[3rem] shadow-2xl flex items-center gap-10">
-               <ShieldAlert size={72} className="animate-pulse" />
-               <div>
-                  <h3 className="text-2xl font-black mb-2 uppercase tracking-tight">Essential safety standards</h3>
-                  <p className="font-medium opacity-90 italic border-t border-red-400/30 pt-2 mt-2">Always follow standard electrical safety protocols during installation.</p>
-               </div>
+        <section id="safety" class="section-card">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="p-3 bg-white rounded-2xl shadow-md text-red-500"><i class="fas fa-shield-halved fa-2x"></i></div>
+                <h2 class="text-4xl font-black text-slate-800">Safety Precautions</h2>
             </div>
-            {[
-              "Standard color coding must be followed: use red for phase and black for neutral wires.",
-              "The live input must always be connected to the common terminal of the first switch.",
-              "Ensure all traveler wire connections are properly tightened and insulated to prevent sparking.",
-              "The load (lamp) should always be placed on the return path before the final neutral connection.",
-              "Always use a neon tester to verify the presence of voltage before touching any metal terminals."
-            ].map((rule, i) => (
-              <div key={i} className="bg-white p-8 rounded-[2rem] shadow-md border-2 border-slate-100 flex items-center gap-8 group hover:border-red-200 transition-colors">
-                 <div className="w-12 h-12 bg-red-50 text-red-600 rounded-full flex items-center justify-center font-black flex-shrink-0 group-hover:bg-red-600 group-hover:text-white transition-colors">{i+1}</div>
-                 <p className="text-slate-700 text-lg leading-snug font-medium">{rule}</p>
-              </div>
-            ))}
-          </div>
-        )}
+            <div class="space-y-4" id="safety-list">
+            </div>
+        </section>
 
-        <footer className="mt-20 flex justify-between items-center pt-10 border-t-2 border-slate-200">
-          <button onClick={() => setIdx(idx - 1)} disabled={idx === 0} className={`px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest flex items-center gap-3 transition-all ${idx === 0 ? 'opacity-0' : 'bg-white shadow-xl hover:bg-slate-50 border-2 border-slate-100'}`}>
-            <ArrowLeft size={18} /> Back
-          </button>
-          
-          <div className="flex gap-4">
-            {SECTIONS.map((_, i) => <div key={i} className={`h-3 rounded-full transition-all duration-500 ${i === idx ? 'w-12 bg-red-500' : 'w-3 bg-slate-200'}`} />)}
-          </div>
+    </main>
 
-          <button onClick={() => idx < SECTIONS.length - 1 ? setIdx(idx + 1) : null} className={`px-14 py-5 rounded-[2rem] font-black uppercase text-xs tracking-[0.2em] flex items-center gap-3 transition-all shadow-2xl ${idx === SECTIONS.length - 1 ? 'bg-green-100 text-green-600' : 'bg-red-600 text-white hover:bg-red-700'}`}>
-            {idx === SECTIONS.length - 1 ? <><CheckCircle size={22} /> FINISHED</> : <>Next <ArrowRight size={22} /></>}
-          </button>
-        </footer>
-      </main>
-    </div>
-  );
-}
+    <footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 z-50">
+        <div class="max-w-4xl mx-auto flex justify-between">
+            <button id="prevBtn" onclick="changeSection(-1)" class="px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest bg-slate-100 text-slate-400">Back</button>
+            <button id="nextBtn" onclick="changeSection(1)" class="px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest bg-red-600 text-white shadow-lg">Next</button>
+        </div>
+    </footer>
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'hi,en',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <script>
+        let currentIdx = 0;
+        let sw1 = 'UP';
+        let sw2 = 'UP';
+
+        const sections = ['aim', 'req', 'demo', 'safety'];
+        
+        const requirements = [
+            { name: "2-Way Switch", spec: "6A, 250V", icon: "fas fa-toggle-on", img: "https://via.placeholder.com/150?text=Switch" },
+            { name: "Lamp Holder", spec: "Pendent", icon: "fas fa-lightbulb", img: "https://via.placeholder.com/150?text=Holder" },
+            { name: "Copper Wire", spec: "1.5 sq mm", icon: "fas fa-bolt", img: "https://via.placeholder.com/150?text=Wire" }
+        ];
+
+        const safetyRules = [
+            "Always follow standard color coding by using red for phase and black for neutral wires.",
+            "Connect the live phase wire directly to the common terminal of the first switch.",
+            "Ensure all wire connections at the lamp holder are tight to prevent sparking.",
+            "The phase wire must be controlled by the switches, never the neutral wire.",
+            "Verify all connections with a neon tester before applying full power to the circuit."
+        ];
+
+        function init() {
+            renderReqs();
+            renderSafety();
+            updateSimulator();
+            updateStepper();
+        }
+
+        function renderReqs() {
+            const grid = document.getElementById('req-grid');
+            grid.innerHTML = requirements.map(r => `
+                <div class="bg-white p-6 rounded-3xl shadow-lg text-center border-2 border-transparent hover:border-red-400 transition-all">
+                    <img src="${r.img}" class="w-full h-32 object-cover rounded-xl mb-4 bg-slate-50">
+                    <div class="text-red-500 mb-2"><i class="${r.icon} fa-xl"></i></div>
+                    <h4 class="font-black text-slate-800 text-sm">${r.name}</h4>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase">${r.spec}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderSafety() {
+            const list = document.getElementById('safety-list');
+            list.innerHTML = safetyRules.map((rule, i) => `
+                <div class="bg-white p-6 rounded-2xl shadow-sm border-2 border-slate-100 flex items-center gap-6">
+                    <div class="w-10 h-10 bg-red-50 text-red-600 rounded-full flex items-center justify-center font-black flex-shrink-0">${i+1}</div>
+                    <p class="text-slate-700 font-medium">${rule}</p>
+                </div>
+            `).join('');
+        }
+
+        function toggleSwitch(num) {
+            if(num === 1) sw1 = (sw1 === 'UP' ? 'DOWN' : 'UP');
+            else sw2 = (sw2 === 'UP' ? 'DOWN' : 'UP');
+            updateSimulator();
+        }
+
+        function updateSimulator() {
+            const isLightOn = sw1 === sw2;
+            
+            // Update Buttons
+            document.getElementById('sw1-up').className = `w-full h-8 rounded-lg transition-all ${sw1 === 'UP' ? 'bg-white shadow-[0_0_15px_white]' : 'bg-slate-950 opacity-40'}`;
+            document.getElementById('sw1-down').className = `w-full h-8 rounded-lg transition-all ${sw1 === 'DOWN' ? 'bg-white shadow-[0_0_15px_white]' : 'bg-slate-950 opacity-40'}`;
+            document.getElementById('sw2-up').className = `w-full h-8 rounded-lg transition-all ${sw2 === 'UP' ? 'bg-white shadow-[0_0_15px_white]' : 'bg-slate-950 opacity-40'}`;
+            document.getElementById('sw2-down').className = `w-full h-8 rounded-lg transition-all ${sw2 === 'DOWN' ? 'bg-white shadow-[0_0_15px_white]' : 'bg-slate-950 opacity-40'}`;
+
+            // Render SVG
+            const svg = `
+                <svg viewBox="0 0 600 300" class="w-full h-full">
+                    <text x="20" y="30" fill="white" font-size="12" font-weight="900">N</text>
+                    <text x="20" y="270" fill="#ef4444" font-size="12" font-weight="900">L</text>
+                    
+                    <path d="M 40 30 L 280 30" stroke="black" stroke-width="4" fill="none" stroke-linecap="round"/>
+                    
+                    <path d="M 40 270 L 100 270" stroke="#ef4444" stroke-width="4" fill="none" />
+
+                    <circle cx="300" cy="30" r="20" stroke="white" stroke-width="2" fill="${isLightOn ? '#facc15' : '#1e293b'}" />
+                    ${isLightOn ? '<circle cx="300" cy="30" r="25" fill="#facc15" class="indicator-pulse" />' : ''}
+
+                    <path d="M 150 250 L 150 180 L 450 180 L 450 250" stroke="#ef4444" stroke-width="2" fill="none" opacity="0.4" />
+                    <path d="M 150 290 L 450 290" stroke="#ef4444" stroke-width="2" fill="none" opacity="0.4" />
+
+                    <circle cx="150" cy="270" r="25" fill="none" stroke="white" stroke-width="1" />
+                    <line x1="125" y1="270" x2="148" y2="${sw1 === 'UP' ? '252' : '288'}" stroke="white" stroke-width="4" stroke-linecap="round" class="switch-arm" />
+
+                    <circle cx="450" cy="270" r="25" fill="none" stroke="white" stroke-width="1" />
+                    <line x1="475" y1="270" x2="452" y2="${sw2 === 'UP' ? '252' : '288'}" stroke="white" stroke-width="4" stroke-linecap="round" class="switch-arm" />
+                    
+                    <path d="M 475 270 L 550 270 L 550 30 L 320 30" stroke="#ef4444" stroke-width="4" fill="none" />
+                </svg>
+            `;
+            document.getElementById('svg-container').innerHTML = svg;
+            updateTable();
+        }
+
+        function updateTable() {
+            const states = [
+                { s1: 'UP', s2: 'UP', status: 'ON' },
+                { s1: 'UP', s2: 'DOWN', status: 'OFF' },
+                { s1: 'DOWN', s2: 'UP', status: 'OFF' },
+                { s1: 'DOWN', s2: 'DOWN', status: 'ON' }
+            ];
+            const body = document.getElementById('obs-table-body');
+            body.innerHTML = states.map(s => {
+                const active = sw1 === s.s1 && sw2 === s.s2;
+                return `
+                    <tr class="${active ? 'bg-red-50 font-bold' : ''}">
+                        <td class="p-4">${s.s1}</td>
+                        <td class="p-4">${s.s2}</td>
+                        <td class="p-4">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-black ${s.status === 'ON' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">
+                                ${s.status}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function changeSection(dir) {
+            const nextIdx = currentIdx + dir;
+            if (nextIdx >= 0 && nextIdx < sections.length) {
+                document.getElementById(sections[currentIdx]).classList.remove('active');
+                currentIdx = nextIdx;
+                document.getElementById(sections[currentIdx]).classList.add('active');
+                
+                document.getElementById('prevBtn').style.opacity = currentIdx === 0 ? '0' : '1';
+                document.getElementById('nextBtn').innerText = currentIdx === sections.length - 1 ? 'Finish' : 'Next';
+                updateStepper();
+            }
+        }
+
+        function updateStepper() {
+            const stepper = document.getElementById('stepper-dots');
+            stepper.innerHTML = sections.map((_, i) => `
+                <div class="h-1.5 rounded-full transition-all duration-300 ${i === currentIdx ? 'w-8 bg-red-500' : 'w-1.5 bg-slate-200'}"></div>
+            `).join('');
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
