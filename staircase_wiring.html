@@ -5,284 +5,333 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staircase Wiring Simulator</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        accent: '#dc2626', // Red-600
+                    },
+                    borderRadius: {
+                        '3xl': '2.5rem',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .section-card { display: none; }
-        .section-card.active { display: block; animation: fadeIn 0.5s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .switch-arm { transition: all 0.3s ease-in-out; transform-origin: center; }
-        .indicator-pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
-        
-        /* Custom styles for Google Translate widget to keep header clean */
-        #google_translate_element {
-            margin-right: 10px;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+        .shadow-soft { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02); }
+        .flow-dot { animation: flow 2s linear infinite; }
+        @keyframes flow {
+            from { stroke-dashoffset: 20; }
+            to { stroke-dashoffset: 0; }
         }
-        .goog-te-gadget-simple {
-            background-color: rgba(255, 255, 255, 0.5) !important;
-            border: 1px solid #e2e8f0 !important;
-            padding: 4px 8px !important;
-            border-radius: 8px !important;
-            font-size: 12px !important;
-        }
-        .goog-te-banner-frame.skiptranslate { display: none !important; }
-        body { top: 0px !important; }
     </style>
 </head>
-<body class="pb-20">
+<body class="bg-slate-50 text-slate-900 min-h-screen pb-24">
 
-    <header class="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-slate-200 z-50 px-6 py-3 flex justify-between items-center shadow-sm">
-        <div class="flex flex-col">
-            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Simulation</span>
-            <span class="text-sm font-bold text-slate-800">Electrical Lab</span>
+    <nav class="fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-50 px-6 py-4 flex items-center justify-between shadow-sm">
+        <h1 class="font-bold text-xl text-slate-800">Staircase Wiring</h1>
+        <div id="stepper" class="flex space-x-2">
+            <div class="w-3 h-3 rounded-full bg-accent"></div>
+            <div class="w-3 h-3 rounded-full bg-slate-200"></div>
+            <div class="w-3 h-3 rounded-full bg-slate-200"></div>
+            <div class="w-3 h-3 rounded-full bg-slate-200"></div>
         </div>
-        
-        <div class="flex items-center gap-4">
-            <div id="google_translate_element"></div>
-            <div class="flex gap-1.5" id="stepper-dots"></div>
-        </div>
-    </header>
+    </nav>
 
-    <main class="max-w-4xl mx-auto px-6 pt-24">
+    <main class="max-w-4xl mx-auto mt-24 px-6">
         
-        <section id="aim" class="section-card active">
-            <div class="flex items-center gap-4 mb-8">
-                <div class="p-3 bg-white rounded-2xl shadow-md text-red-500"><i class="fas fa-crosshairs fa-2x"></i></div>
-                <h2 class="text-4xl font-black text-slate-800">Aim</h2>
+        <section id="step-1" class="step-content active">
+            <div class="bg-white rounded-3xl p-12 shadow-soft border border-slate-100 text-center">
+                <div class="inline-block p-4 bg-red-50 rounded-2xl mb-6">
+                    <svg class="w-12 h-12 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <h2 class="text-3xl font-bold mb-4">Objective</h2>
+                <p class="text-xl text-slate-600 italic leading-relaxed">
+                    "To wire up a PVC conduit circuit to control one lamp from two different places using two-way switches, effectively demonstrating the principle of staircase lighting."
+                </p>
+                <p class="mt-4 text-sm text-slate-400"></p>
             </div>
-            <div class="bg-white p-12 rounded-[2.5rem] shadow-xl border-l-[12px] border-red-500">
-                <p class="text-2xl text-slate-600 italic font-medium leading-relaxed">
-                    "To implement a staircase wiring system using two 2-way switches to control a single lamp from two separate locations."
+        </section>
+
+        <section id="step-2" class="step-content">
+            <h2 class="text-2xl font-bold mb-8">Required Components</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-3xl shadow-soft border border-slate-100 flex items-center space-x-6">
+                    <img src="https://drive.google.com/uc?export=view&id=1X_jU1D2F9vW7G2I4y6S6m5K6u7D8E9F0" alt="Two-way Switch" class="w-24 h-24 object-contain rounded-2xl bg-slate-50 p-2 shadow-inner" onerror="this.src='https://placehold.co/100x100?text=Two-way+Switch'">
+                    <div>
+                        <h3 class="font-bold text-lg">Two-way Switch</h3>
+                        <p class="text-sm text-slate-500">6A, 250V AC, Surface/Flush type</p>
+                        <p class="text-xs text-red-600 mt-1">Quantity: 02 Nos.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-3xl shadow-soft border border-slate-100 flex items-center space-x-6">
+                    <div class="w-24 h-24 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-300">
+                        <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg">Batten Lamp Holder</h3>
+                        <p class="text-sm text-slate-500">Pendent/Batten type, 6A</p>
+                        <p class="text-xs text-red-600 mt-1">Quantity: 01 No.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-3xl shadow-soft border border-slate-100 flex items-center space-x-6">
+                    <img src="https://drive.google.com/uc?export=view&id=1Y-jU1D2F9vW7G2I4y6S6m5K6u7D8E9F0" alt="Copper Wire" class="w-24 h-24 object-contain rounded-2xl bg-slate-50 p-2 shadow-inner" onerror="this.src='https://placehold.co/100x100?text=Copper+Wire'">
+                    <div>
+                        <h3 class="font-bold text-lg">Copper Wire</h3>
+                        <p class="text-sm text-slate-500">1.5 sq.mm, PVC Insulated</p>
+                        <p class="text-xs text-red-600 mt-1">As required</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-3xl shadow-soft border border-slate-100 flex items-center space-x-6">
+                    <div class="w-24 h-24 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-300">
+                         <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg">PVC Conduit & Fittings</h3>
+                        <p class="text-sm text-slate-500">19mm Diameter</p>
+                        <p class="text-xs text-red-600 mt-1">As required</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="step-3" class="step-content">
+            <h2 class="text-2xl font-bold mb-4">Working Principle</h2>
+            <div class="bg-white p-8 rounded-3xl shadow-soft border border-slate-100 mb-8">
+                <p class="text-slate-600 leading-relaxed">
+                    Staircase wiring utilizes two <b>Two-Way Switches</b> (SPDT). The switches are connected such that the Phase wire enters the common terminal of the first switch, and the output travels through two 'interconnector' wires to the second switch. The common terminal of the second switch then connects to the lamp. This setup creates two parallel paths; toggling either switch changes the state of the circuit (Open/Closed), allowing the lamp to be turned ON or OFF from either location.
                 </p>
             </div>
-        </section>
-
-        <section id="req" class="section-card">
-            <div class="flex items-center gap-4 mb-8">
-                <div class="p-3 bg-white rounded-2xl shadow-md text-red-500"><i class="fas fa-list-check fa-2x"></i></div>
-                <h2 class="text-4xl font-black text-slate-800">Requirements</h2>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-6" id="req-grid">
-            </div>
-        </section>
-
-        <section id="demo" class="section-card">
-            <div class="flex items-center gap-4 mb-8">
-                <div class="p-3 bg-white rounded-2xl shadow-md text-red-500"><i class="fas fa-bolt fa-2x"></i></div>
-                <h2 class="text-4xl font-black text-slate-800">Demonstration</h2>
-            </div>
             
-            <div class="bg-slate-950 p-6 rounded-[3rem] shadow-2xl relative border-[10px] border-slate-900 mb-10">
-                <div id="svg-container" class="w-full aspect-video"></div>
+            <h3 class="text-lg font-semibold mb-4">Circuit Schematic</h3>
+            <div class="bg-white p-10 rounded-3xl shadow-soft border border-slate-100 flex justify-center">
+                <svg width="400" height="200" viewBox="0 0 400 200">
+                    <line x1="20" y1="100" x2="60" y2="100" stroke="#dc2626" stroke-width="3" />
+                    <text x="10" y="90" fill="#dc2626" font-size="12" font-weight="bold">L (Phase)</text>
+                    
+                    <circle cx="70" cy="100" r="4" fill="#334155" />
+                    <line x1="70" y1="100" x2="100" y2="80" stroke="#334155" stroke-width="3" id="sch-sw1" />
+                    <circle cx="110" cy="70" r="4" fill="#334155" />
+                    <circle cx="110" cy="130" r="4" fill="#334155" />
+
+                    <line x1="110" y1="70" x2="240" y2="70" stroke="#334155" stroke-width="2" />
+                    <line x1="110" y1="130" x2="240" y2="130" stroke="#334155" stroke-width="2" />
+
+                    <circle cx="280" cy="100" r="4" fill="#334155" />
+                    <line x1="280" y1="100" x2="250" y2="80" stroke="#334155" stroke-width="3" id="sch-sw2" />
+                    <circle cx="240" cy="70" r="4" fill="#334155" />
+                    <circle cx="240" cy="130" r="4" fill="#334155" />
+
+                    <line x1="280" y1="100" x2="320" y2="100" stroke="#dc2626" stroke-width="3" />
+                    
+                    <circle cx="340" cy="100" r="15" stroke="#334155" stroke-width="2" fill="none" />
+                    <path d="M331 91 L349 109 M331 109 L349 91" stroke="#334155" stroke-width="2" />
+
+                    <line x1="355" y1="100" x2="380" y2="100" stroke="black" stroke-width="3" />
+                    <line x1="380" y1="100" x2="380" y2="150" stroke="black" stroke-width="3" />
+                    <line x1="380" y1="150" x2="20" y2="150" stroke="black" stroke-width="3" />
+                    <text x="10" y="165" fill="black" font-size="12" font-weight="bold">N (Neutral)</text>
+                </svg>
+            </div>
+        </section>
+
+        <section id="step-4" class="step-content">
+            <h2 class="text-2xl font-bold mb-4">Interactive Demonstration</h2>
+            <div class="bg-white rounded-3xl shadow-soft border border-slate-100 overflow-hidden mb-8">
+                <div class="p-8 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+                    <span class="text-sm font-semibold uppercase tracking-widest text-slate-400">Workshop Simulator</span>
+                    <div id="status-badge" class="px-4 py-1 rounded-full bg-slate-200 text-slate-600 text-xs font-bold uppercase">Circuit Open</div>
+                </div>
                 
-                <div class="flex justify-around mt-8 pb-4">
-                    <div class="text-center">
-                        <button onclick="toggleSwitch(1)" class="w-16 h-28 bg-slate-800 rounded-2xl border-4 border-slate-700 p-2 flex flex-col justify-between">
-                            <div id="sw1-up" class="w-full h-8 bg-white rounded-lg shadow-[0_0_15px_white] transition-all"></div>
-                            <div id="sw1-down" class="w-full h-8 bg-slate-950 opacity-40 rounded-lg transition-all"></div>
-                        </button>
-                        <p class="text-[10px] text-white font-black mt-3 uppercase">Switch 1</p>
-                    </div>
-                    <div class="text-center">
-                        <button onclick="toggleSwitch(2)" class="w-16 h-28 bg-slate-800 rounded-2xl border-4 border-slate-700 p-2 flex flex-col justify-between">
-                            <div id="sw2-up" class="w-full h-8 bg-white rounded-lg shadow-[0_0_15px_white] transition-all"></div>
-                            <div id="sw2-down" class="w-full h-8 bg-slate-950 opacity-40 rounded-lg transition-all"></div>
-                        </button>
-                        <p class="text-[10px] text-white font-black mt-3 uppercase">Switch 2</p>
+                <div class="p-12 flex flex-col items-center">
+                    <svg width="600" height="300" viewBox="0 0 600 300" class="cursor-pointer">
+                        <path id="wire-path" d="M 50 150 L 150 150 M 200 120 L 400 120 M 200 180 L 400 180 M 450 150 L 500 150" stroke="#cbd5e1" stroke-width="4" fill="none" />
+                        
+                        <path id="flow-line" d="M 50 150 L 150 150 L 200 120 L 400 120 L 450 150 L 500 150" stroke="#fca5a5" stroke-width="4" fill="none" stroke-dasharray="10,10" class="flow-dot hidden" />
+
+                        <g id="btn-sw1" onclick="toggleSwitch(1)">
+                            <rect x="130" y="110" width="60" height="80" rx="10" fill="#ef4444" />
+                            <circle id="sw1-toggle" cx="160" cy="135" r="12" fill="white" />
+                            <text x="130" y="210" text-anchor="middle" font-size="12" class="font-bold fill-slate-400" transform="translate(30,0)">S1 (Down)</text>
+                        </g>
+
+                        <g id="btn-sw2" onclick="toggleSwitch(2)">
+                            <rect x="410" y="110" width="60" height="80" rx="10" fill="#ef4444" />
+                            <circle id="sw2-toggle" cx="440" cy="135" r="12" fill="white" />
+                            <text x="410" y="210" text-anchor="middle" font-size="12" class="font-bold fill-slate-400" transform="translate(30,0)">S2 (Up)</text>
+                        </g>
+
+                        <g id="bulb-group">
+                            <path d="M 500 160 L 500 140 Q 500 110 530 110 Q 560 110 560 140 L 560 160 Z" fill="#e2e8f0" id="bulb-glass" />
+                            <rect x="520" y="160" width="20" height="15" fill="#94a3b8" />
+                            <circle id="light-glow" cx="530" cy="135" r="40" fill="rgba(251, 191, 36, 0.3)" class="hidden" />
+                        </g>
+                    </svg>
+
+                    <div class="mt-8 grid grid-cols-2 gap-8 text-center w-full">
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                            <p class="text-xs uppercase font-bold text-slate-400 mb-1">Switch 1 Position</p>
+                            <p id="label-sw1" class="text-xl font-bold">UP</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                            <p class="text-xs uppercase font-bold text-slate-400 mb-1">Switch 2 Position</p>
+                            <p id="label-sw2" class="text-xl font-bold">UP</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white p-10 rounded-[2.5rem] shadow-xl">
-                <h3 class="text-xl font-black text-slate-800 mb-6 uppercase flex items-center gap-3">
-                    <i class="fas fa-table text-red-500"></i> Observation Table
-                </h3>
-                <table class="w-full text-left border-collapse rounded-2xl overflow-hidden border-2 border-slate-100">
-                    <thead class="bg-slate-50">
-                        <tr class="text-xs font-black uppercase text-slate-400">
-                            <th class="p-4">Switch 1</th>
-                            <th class="p-4">Switch 2</th>
-                            <th class="p-4">Lamp Status</th>
+            <div class="bg-white rounded-3xl shadow-soft border border-slate-100 p-8">
+                <h3 class="font-bold text-lg mb-4">Logic Truth Table</h3>
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-slate-400 text-sm border-b border-slate-100">
+                            <th class="pb-4 font-semibold">Switch 1 (S1)</th>
+                            <th class="pb-4 font-semibold">Switch 2 (S2)</th>
+                            <th class="pb-4 font-semibold">Lamp State</th>
                         </tr>
                     </thead>
-                    <tbody id="obs-table-body" class="text-sm">
+                    <tbody class="text-slate-600">
+                        <tr id="row-1" class="border-b border-slate-50">
+                            <td class="py-4">UP (Pos A)</td>
+                            <td class="py-4">UP (Pos A)</td>
+                            <td class="py-4 font-bold text-green-600">ON</td>
+                        </tr>
+                        <tr id="row-2" class="border-b border-slate-50">
+                            <td class="py-4">DOWN (Pos B)</td>
+                            <td class="py-4">UP (Pos A)</td>
+                            <td class="py-4">OFF</td>
+                        </tr>
+                        <tr id="row-3" class="border-b border-slate-50">
+                            <td class="py-4">UP (Pos A)</td>
+                            <td class="py-4">DOWN (Pos B)</td>
+                            <td class="py-4">OFF</td>
+                        </tr>
+                        <tr id="row-4">
+                            <td class="py-4">DOWN (Pos B)</td>
+                            <td class="py-4">DOWN (Pos B)</td>
+                            <td class="py-4 font-bold text-green-600">ON</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
-        </section>
 
-        <section id="safety" class="section-card">
-            <div class="flex items-center gap-4 mb-8">
-                <div class="p-3 bg-white rounded-2xl shadow-md text-red-500"><i class="fas fa-shield-halved fa-2x"></i></div>
-                <h2 class="text-4xl font-black text-slate-800">Safety Precautions</h2>
-            </div>
-            <div class="space-y-4" id="safety-list">
+            <div class="mt-8 bg-red-50 rounded-3xl p-8 border border-red-100">
+                <h3 class="text-red-800 font-bold mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    Safety Precautions
+                </h3>
+                <ul class="space-y-3 text-red-700 text-sm">
+                    <li>• Always disconnect the main power supply before starting the wiring.</li>
+                    <li>• Ensure all connections are tight to prevent sparking or heat generation.</li>
+                    <li>• Use only BIS-approved wires and switches with proper current ratings.</li>
+                    <li>• Keep your hands and the workbench area completely dry during the experiment.</li>
+                    <li>• Verify the circuit continuity with a multimeter before applying live AC voltage.</li>
+                </ul>
             </div>
         </section>
 
     </main>
 
-    <footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 z-50">
+    <footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-8 py-4 z-50">
         <div class="max-w-4xl mx-auto flex justify-between">
-            <button id="prevBtn" onclick="changeSection(-1)" class="px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest bg-slate-100 text-slate-400">Back</button>
-            <button id="nextBtn" onclick="changeSection(1)" class="px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest bg-red-600 text-white shadow-lg">Next</button>
+            <button id="prevBtn" onclick="changeStep(-1)" class="px-8 py-3 rounded-2xl font-bold text-slate-400 bg-slate-100 transition-all hover:bg-slate-200 disabled:opacity-50">Back</button>
+            <button id="nextBtn" onclick="changeStep(1)" class="px-8 py-3 rounded-2xl font-bold text-white bg-accent shadow-lg shadow-red-200 transition-all hover:scale-105 active:scale-95">Next</button>
         </div>
     </footer>
 
-    <!-- Google Translate Script -->
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'hi,en',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-            }, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
     <script>
-        let currentIdx = 0;
-        let sw1 = 'UP';
-        let sw2 = 'UP';
-
-        const sections = ['aim', 'req', 'demo', 'safety'];
+        let currentStep = 1;
+        const totalSteps = 4;
         
-        const requirements = [
-            { name: "2-Way Switch", spec: "6A, 250V", icon: "fas fa-toggle-on", img: "https://via.placeholder.com/150?text=Switch" },
-            { name: "Lamp Holder", spec: "Pendent", icon: "fas fa-lightbulb", img: "https://via.placeholder.com/150?text=Holder" },
-            { name: "Copper Wire", spec: "1.5 sq mm", icon: "fas fa-bolt", img: "https://via.placeholder.com/150?text=Wire" }
-        ];
+        let sw1 = true; // true = UP, false = DOWN
+        let sw2 = true;
 
-        const safetyRules = [
-            "Always follow standard color coding by using red for phase and black for neutral wires.",
-            "Connect the live phase wire directly to the common terminal of the first switch.",
-            "Ensure all wire connections at the lamp holder are tight to prevent sparking.",
-            "The phase wire must be controlled by the switches, never the neutral wire.",
-            "Verify all connections with a neon tester before applying full power to the circuit."
-        ];
+        function changeStep(delta) {
+            const nextStep = currentStep + delta;
+            if (nextStep < 1 || nextStep > totalSteps) return;
 
-        function init() {
-            renderReqs();
-            renderSafety();
-            updateSimulator();
-            updateStepper();
-        }
-
-        function renderReqs() {
-            const grid = document.getElementById('req-grid');
-            grid.innerHTML = requirements.map(r => `
-                <div class="bg-white p-6 rounded-3xl shadow-lg text-center border-2 border-transparent hover:border-red-400 transition-all">
-                    <img src="${r.img}" class="w-full h-32 object-cover rounded-xl mb-4 bg-slate-50">
-                    <div class="text-red-500 mb-2"><i class="${r.icon} fa-xl"></i></div>
-                    <h4 class="font-black text-slate-800 text-sm">${r.name}</h4>
-                    <p class="text-[10px] text-slate-400 font-bold uppercase">${r.spec}</p>
-                </div>
-            `).join('');
-        }
-
-        function renderSafety() {
-            const list = document.getElementById('safety-list');
-            list.innerHTML = safetyRules.map((rule, i) => `
-                <div class="bg-white p-6 rounded-2xl shadow-sm border-2 border-slate-100 flex items-center gap-6">
-                    <div class="w-10 h-10 bg-red-50 text-red-600 rounded-full flex items-center justify-center font-black flex-shrink-0">${i+1}</div>
-                    <p class="text-slate-700 font-medium">${rule}</p>
-                </div>
-            `).join('');
-        }
-
-        function toggleSwitch(num) {
-            if(num === 1) sw1 = (sw1 === 'UP' ? 'DOWN' : 'UP');
-            else sw2 = (sw2 === 'UP' ? 'DOWN' : 'UP');
-            updateSimulator();
-        }
-
-        function updateSimulator() {
-            const isLightOn = sw1 === sw2;
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+            document.getElementById(`step-${nextStep}`).classList.add('active');
             
-            // Update Buttons
-            document.getElementById('sw1-up').className = `w-full h-8 rounded-lg transition-all ${sw1 === 'UP' ? 'bg-white shadow-[0_0_15px_white]' : 'bg-slate-950 opacity-40'}`;
-            document.getElementById('sw1-down').className = `w-full h-8 rounded-lg transition-all ${sw1 === 'DOWN' ? 'bg-white shadow-[0_0_15px_white]' : 'bg-slate-950 opacity-40'}`;
-            document.getElementById('sw2-up').className = `w-full h-8 rounded-lg transition-all ${sw2 === 'UP' ? 'bg-white shadow-[0_0_15px_white]' : 'bg-slate-950 opacity-40'}`;
-            document.getElementById('sw2-down').className = `w-full h-8 rounded-lg transition-all ${sw2 === 'DOWN' ? 'bg-white shadow-[0_0_15px_white]' : 'bg-slate-950 opacity-40'}`;
-
-            // Render SVG
-            const svg = `
-                <svg viewBox="0 0 600 300" class="w-full h-full">
-                    <text x="20" y="30" fill="white" font-size="12" font-weight="900">N</text>
-                    <text x="20" y="270" fill="#ef4444" font-size="12" font-weight="900">L</text>
-                    
-                    <path d="M 40 30 L 280 30" stroke="black" stroke-width="4" fill="none" stroke-linecap="round"/>
-                    
-                    <path d="M 40 270 L 100 270" stroke="#ef4444" stroke-width="4" fill="none" />
-
-                    <circle cx="300" cy="30" r="20" stroke="white" stroke-width="2" fill="${isLightOn ? '#facc15' : '#1e293b'}" />
-                    ${isLightOn ? '<circle cx="300" cy="30" r="25" fill="#facc15" class="indicator-pulse" />' : ''}
-
-                    <path d="M 150 250 L 150 180 L 450 180 L 450 250" stroke="#ef4444" stroke-width="2" fill="none" opacity="0.4" />
-                    <path d="M 150 290 L 450 290" stroke="#ef4444" stroke-width="2" fill="none" opacity="0.4" />
-
-                    <circle cx="150" cy="270" r="25" fill="none" stroke="white" stroke-width="1" />
-                    <line x1="125" y1="270" x2="148" y2="${sw1 === 'UP' ? '252' : '288'}" stroke="white" stroke-width="4" stroke-linecap="round" class="switch-arm" />
-
-                    <circle cx="450" cy="270" r="25" fill="none" stroke="white" stroke-width="1" />
-                    <line x1="475" y1="270" x2="452" y2="${sw2 === 'UP' ? '252' : '288'}" stroke="white" stroke-width="4" stroke-linecap="round" class="switch-arm" />
-                    
-                    <path d="M 475 270 L 550 270 L 550 30 L 320 30" stroke="#ef4444" stroke-width="4" fill="none" />
-                </svg>
-            `;
-            document.getElementById('svg-container').innerHTML = svg;
-            updateTable();
+            currentStep = nextStep;
+            updateUI();
+            window.scrollTo(0,0);
         }
 
-        function updateTable() {
-            const states = [
-                { s1: 'UP', s2: 'UP', status: 'ON' },
-                { s1: 'UP', s2: 'DOWN', status: 'OFF' },
-                { s1: 'DOWN', s2: 'UP', status: 'OFF' },
-                { s1: 'DOWN', s2: 'DOWN', status: 'ON' }
-            ];
-            const body = document.getElementById('obs-table-body');
-            body.innerHTML = states.map(s => {
-                const active = sw1 === s.s1 && sw2 === s.s2;
-                return `
-                    <tr class="${active ? 'bg-red-50 font-bold' : ''}">
-                        <td class="p-4">${s.s1}</td>
-                        <td class="p-4">${s.s2}</td>
-                        <td class="p-4">
-                            <span class="px-3 py-1 rounded-full text-[10px] font-black ${s.status === 'ON' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">
-                                ${s.status}
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function changeSection(dir) {
-            const nextIdx = currentIdx + dir;
-            if (nextIdx >= 0 && nextIdx < sections.length) {
-                document.getElementById(sections[currentIdx]).classList.remove('active');
-                currentIdx = nextIdx;
-                document.getElementById(sections[currentIdx]).classList.add('active');
-                
-                document.getElementById('prevBtn').style.opacity = currentIdx === 0 ? '0' : '1';
-                document.getElementById('nextBtn').innerText = currentIdx === sections.length - 1 ? 'Finish' : 'Next';
-                updateStepper();
+        function updateUI() {
+            // Update Stepper
+            const dots = document.getElementById('stepper').children;
+            for (let i = 0; i < dots.length; i++) {
+                dots[i].className = `w-3 h-3 rounded-full ${i < currentStep ? 'bg-accent' : 'bg-slate-200'}`;
             }
+
+            // Buttons
+            document.getElementById('prevBtn').disabled = currentStep === 1;
+            document.getElementById('nextBtn').innerText = currentStep === totalSteps ? 'Finish' : 'Next';
         }
 
-        function updateStepper() {
-            const stepper = document.getElementById('stepper-dots');
-            stepper.innerHTML = sections.map((_, i) => `
-                <div class="h-1.5 rounded-full transition-all duration-300 ${i === currentIdx ? 'w-8 bg-red-500' : 'w-1.5 bg-slate-200'}"></div>
-            `).join('');
+        function toggleSwitch(id) {
+            if (id === 1) {
+                sw1 = !sw1;
+                document.getElementById('sw1-toggle').setAttribute('cy', sw1 ? 135 : 165);
+                document.getElementById('label-sw1').innerText = sw1 ? 'UP' : 'DOWN';
+            } else {
+                sw2 = !sw2;
+                document.getElementById('sw2-toggle').setAttribute('cy', sw2 ? 135 : 165);
+                document.getElementById('label-sw2').innerText = sw2 ? 'UP' : 'DOWN';
+            }
+            calculateLogic();
         }
 
-        window.onload = init;
+        function calculateLogic() {
+            const isLit = (sw1 === sw2);
+            
+            // Visuals
+            const bulbGlass = document.getElementById('bulb-glass');
+            const glow = document.getElementById('light-glow');
+            const flow = document.getElementById('flow-line');
+            const badge = document.getElementById('status-badge');
+
+            if (isLit) {
+                bulbGlass.setAttribute('fill', '#fbbf24');
+                glow.classList.remove('hidden');
+                flow.classList.remove('hidden');
+                badge.innerText = "Circuit Closed (ON)";
+                badge.className = "px-4 py-1 rounded-full bg-green-100 text-green-600 text-xs font-bold uppercase";
+                
+                // Set path based on switch positions
+                if (sw1) {
+                    flow.setAttribute('d', "M 50 150 L 150 150 L 200 120 L 400 120 L 450 150 L 500 150");
+                } else {
+                    flow.setAttribute('d', "M 50 150 L 150 150 L 200 180 L 400 180 L 450 150 L 500 150");
+                }
+            } else {
+                bulbGlass.setAttribute('fill', '#e2e8f0');
+                glow.classList.add('hidden');
+                flow.classList.add('hidden');
+                badge.innerText = "Circuit Open (OFF)";
+                badge.className = "px-4 py-1 rounded-full bg-slate-200 text-slate-600 text-xs font-bold uppercase";
+            }
+
+            // Highlight Row in Table
+            for(let i=1; i<=4; i++) document.getElementById(`row-${i}`).classList.remove('bg-red-50');
+            
+            if(sw1 && sw2) document.getElementById('row-1').classList.add('bg-red-50');
+            if(!sw1 && sw2) document.getElementById('row-2').classList.add('bg-red-50');
+            if(sw1 && !sw2) document.getElementById('row-3').classList.add('bg-red-50');
+            if(!sw1 && !sw2) document.getElementById('row-4').classList.add('bg-red-50');
+        }
+
+        // Initialize logic state
+        calculateLogic();
+
     </script>
 </body>
 </html>
