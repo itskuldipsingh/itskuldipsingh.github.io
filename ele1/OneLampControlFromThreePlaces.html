@@ -10,56 +10,48 @@
         section { background: white; margin-bottom: 30px; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         h2 { color: var(--primary); border-left: 6px solid var(--primary); padding-left: 15px; text-transform: uppercase; font-size: 1.3em; margin-bottom: 20px; }
         
+        /* Grid Layout */
         .req-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .req-card { 
-            background: white; border: 1px solid #eee; border-radius: 12px; overflow: hidden; 
-            display: flex; flex-direction: column; transition: 0.3s; cursor: pointer; height: 250px;
-        }
-        .req-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .img-container { width: 100%; height: 150px; background: #f9f9f9; display: flex; align-items: center; justify-content: center; padding: 15px; box-sizing: border-box; }
+        .req-card { background: white; border: 1px solid #eee; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; height: 220px; transition: 0.3s; }
+        .req-card:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .img-container { width: 100%; height: 130px; background: #f9f9f9; display: flex; align-items: center; justify-content: center; padding: 10px; }
         .img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .card-info { padding: 12px; text-align: center; flex-grow: 1; background: #fff; }
-        .qty-label { display: block; font-size: 0.8em; color: var(--primary); margin-top: 5px; font-weight: bold; }
+        .card-info { padding: 10px; text-align: center; font-weight: bold; font-size: 0.9em; }
 
-        .overlay { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; }
-        .popup-content { position: relative; width: 90%; max-width: 800px; }
-        .popup-content img { width: 100%; border: 5px solid white; border-radius: 10px; background: white; }
-        .close-btn { position: absolute; top: -50px; right: 0; color: white; font-size: 45px; cursor: pointer; }
-
+        /* Simulation Box */
         .demo-box { display: flex; flex-direction: column; align-items: center; background: var(--bg); padding: 30px; border-radius: 15px; border: 2px dashed var(--primary); }
-        #circuit-svg { background: white; border-radius: 10px; border: 1px solid #ddd; width: 100%; max-width: 700px; }
+        #circuit-svg { background: white; border-radius: 10px; border: 1px solid #ddd; width: 100%; max-width: 800px; height: auto; }
         
+        /* Wiring Styles */
         .wire { fill: none; stroke-width: 3; stroke-linecap: round; }
         .wire-phase { stroke: var(--danger); }
         .wire-neutral { stroke: #337ab7; }
-        .wire-fixed { stroke: #ddd; stroke-dasharray: 4; }
+        .wire-fixed { stroke: #ddd; stroke-dasharray: 4; } 
         
+        /* Current Animation Glow */
         .current-glow { stroke: #ffeb3b; stroke-width: 5; stroke-dasharray: 10; animation: flowAnim 1s linear infinite; display: none; fill: none; }
         @keyframes flowAnim { from { stroke-dashoffset: 20; } to { stroke-dashoffset: 0; } }
 
-        .lamp-on { fill: #f1c40f; filter: drop-shadow(0 0 20px #f1c40f); stroke: #f39c12; }
-        .lamp-off { fill: #e0e0e0; stroke: #999; }
-        .switch-arm { stroke: #333; stroke-width: 5; stroke-linecap: round; transition: 0.3s; }
+        /* Lamp Symbol States */
+        .lamp-symbol { stroke-width: 2.5; transition: 0.4s ease; }
+        .lamp-on .bulb-circle { fill: #fff700; filter: drop-shadow(0 0 20px #ffea00); stroke: #d4af37; }
+        .lamp-on .bulb-cross { stroke: #b8860b; }
+        
+        .lamp-off .bulb-circle { fill: #000000; stroke: #000; }
+        .lamp-off .bulb-cross { stroke: #444; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 25px; background: white; }
-        th, td { padding: 12px; border: 1px solid #eee; text-align: center; }
-        th { background: var(--primary); color: white; }
-        .active-row { background: #e8f4f8; font-weight: bold; outline: 2px solid var(--primary); }
+        .switch-arm { stroke: #333; stroke-width: 6; stroke-linecap: round; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-container { margin: 25px 0; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+        button { padding: 12px 24px; cursor: pointer; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; transition: 0.2s; }
+        button:hover { background: #13495f; transform: scale(1.05); }
+        button:active { transform: scale(0.95); }
 
-        .procedure-steps { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; width: 100%; box-sizing: border-box; border: 1px solid #eee; }
-        .procedure-steps ol { padding-left: 20px; }
-        .procedure-steps li { margin-bottom: 10px; font-size: 0.95em; }
+        .procedure-steps { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; width: 100%; border: 1px solid #eee; }
+        .procedure-steps ol { padding-left: 20px; margin: 0; }
+        .procedure-steps li { margin-bottom: 8px; font-size: 0.95em; }
     </style>
 </head>
 <body>
-
-    <div id="imagePopup" class="overlay" onclick="closePopup()">
-        <div class="popup-content" onclick="event.stopPropagation()">
-            <span class="close-btn" onclick="closePopup()">×</span>
-            <img id="popupImg" src="">
-            <p id="popupTitle" style="color: white; padding: 10px; font-weight: bold; text-align: center;"></p>
-        </div>
-    </div>
 
     <section>
         <h2>Aim</h2>
@@ -69,28 +61,19 @@
     <section>
         <h2>Requirements</h2>
         <div class="req-grid">
-            <div class="req-card" onclick="openPopup('1-93efW9X2Dp_4deZ5t5ZoyKOTF9CAIS3', 'Insulated Screwdriver')">
-                <div class="img-container"><img src="https://drive.google.com/uc?id=1-93efW9X2Dp_4deZ5t5ZoyKOTF9CAIS3"></div>
-                <div class="card-info"><p>Insulated Screwdriver</p><span class="qty-label">Quantity: 1 No.</span></div>
+            <div class="req-card">
+                <div class="img-container"><img src="https://drive.google.com/uc?id=1-93efW9X2Dp_4deZ5t5ZoyKOTF9CAIS3" alt="Screwdriver"></div>
+                <div class="card-info">Insulated Screwdriver</div>
             </div>
-            <div class="req-card" onclick="openPopup('1Tx16owoZAoz31yRVqUW_f3Fjqb07Foiw', 'Combination Plier')">
-                <div class="img-container"><img src="https://drive.google.com/uc?id=1Tx16owoZAoz31yRVqUW_f3Fjqb07Foiw"></div>
-                <div class="card-info"><p>Combination Plier</p><span class="qty-label">Quantity: 1 No.</span></div>
+            <div class="req-card">
+                <div class="img-container"><img src="https://drive.google.com/uc?id=1rQQdHT0pDf_uZEz6agZdjPMiw56fIBg7" alt="Tester"></div>
+                <div class="card-info">Neon Tester</div>
             </div>
-            <div class="req-card" onclick="openPopup('1rQQdHT0pDf_uZEz6agZdjPMiw56fIBg7', 'Neon Tester')">
-                <div class="img-container"><img src="https://drive.google.com/uc?id=1rQQdHT0pDf_uZEz6agZdjPMiw56fIBg7"></div>
-                <div class="card-info"><p>Neon Tester</p><span class="qty-label">Quantity: 1 No.</span></div>
-            </div>
-            <div class="req-card" onclick="openPopup('1qhdNZaYP1THhpsZvklXP2wWtsUe9ixYY', 'PVC Insulated Cable')">
-                <div class="img-container"><img src="https://drive.google.com/uc?id=1qhdNZaYP1THhpsZvklXP2wWtsUe9ixYY"></div>
-                <div class="card-info"><p>PVC Insulated Cable</p><span class="qty-label">Quantity: 8 Meters</span></div>
+            <div class="req-card">
+                <div class="img-container"><img src="https://drive.google.com/uc?id=1qhdNZaYP1THhpsZvklXP2wWtsUe9ixYY" alt="Cable"></div>
+                <div class="card-info">PVC Insulated Cable</div>
             </div>
         </div>
-    </section>
-
-    <section>
-        <h2>Theory</h2>
-        <p>To control a lamp from three positions, an <strong>Intermediate Switch</strong> is connected between two <strong>2-way switches</strong>. The intermediate switch contains four terminals and allows the traveler wires to be connected either "Straight" or "Crossed." Flipping any of the three switches changes the continuity of the circuit, toggling the lamp state.</p>
     </section>
 
     <section>
@@ -99,62 +82,56 @@
             <div class="procedure-steps">
                 <strong>Installation Procedure:</strong>
                 <ol>
-                    <li>Fix the PVC conduit pipes and junction boxes onto the wiring board according to the layout.</li>
-                    <li>Draw the Phase and Neutral cables through the conduit.</li>
-                    <li>Connect the incoming Phase wire to the center terminal of the first 2-way switch (S1).</li>
-                    <li>Connect the two traveler wires from S1 to the first pair of terminals on the Intermediate Switch (S2).</li>
-                    <li>Connect the second pair of terminals on S2 to the outer terminals of the second 2-way switch (S3).</li>
-                    <li>Connect the center terminal of S3 to the Lamp holder.</li>
-                    <li>Connect the Neutral wire directly to the lamp holder.</li>
+                    <li>Connect the Phase wire to the common terminal of Switch 1 (S1).</li>
+                    <li>Connect travelers from S1 to the first set of terminals on the Intermediate Switch (S2).</li>
+                    <li>Connect the second set of terminals on S2 to the travelers of Switch 3 (S3).</li>
+                    <li>Connect the common terminal of S3 to the Lamp holder.</li>
+                    <li>Connect the Neutral wire directly to the lamp holder to complete the circuit.</li>
                 </ol>
             </div>
 
-            <svg id="circuit-svg" viewBox="0 0 600 250">
-                <path class="wire wire-neutral" d="M 50 40 L 520 40 L 520 80" />
-                <path class="wire wire-phase" d="M 50 200 L 100 200 L 100 165" />
+            <svg id="circuit-svg" viewBox="0 0 800 320">
+                <path class="wire wire-neutral" d="M 50 40 L 400 40 L 400 75" />
                 
-                <line class="wire wire-fixed" x1="130" y1="145" x2="250" y2="145" />
-                <line class="wire wire-fixed" x1="130" y1="185" x2="250" y2="185" />
-                <line class="wire wire-fixed" x1="310" y1="145" x2="430" y2="145" />
-                <line class="wire wire-fixed" x1="310" y1="185" x2="430" y2="185" />
+                <path class="wire wire-phase" d="M 50 260 L 120 260" />
                 
-                <path class="wire wire-phase" d="M 460 165 L 460 120 L 520 120" />
+                <line class="wire wire-fixed" x1="160" y1="240" x2="360" y2="240" />
+                <line class="wire wire-fixed" x1="160" y1="280" x2="360" y2="280" />
+                <line class="wire wire-fixed" x1="440" y1="240" x2="640" y2="240" />
+                <line class="wire wire-fixed" x1="440" y1="280" x2="640" y2="280" />
+                
+                <path class="wire wire-phase" d="M 680 260 L 730 260 L 730 140 L 400 140 L 400 115" />
 
-                <path id="glow-p1" class="current-glow" d="M 50 200 L 100 200 L 100 165" />
-                <line id="glow-t1" class="current-glow" x1="130" y1="145" x2="250" y2="145" />
-                <line id="glow-t2" class="current-glow" x1="130" y1="185" x2="250" y2="185" />
-                <line id="glow-t3" class="current-glow" x1="310" y1="145" x2="430" y2="145" />
-                <line id="glow-t4" class="current-glow" x1="310" y1="185" x2="430" y2="185" />
-                <path id="glow-out" class="current-glow" d="M 460 165 L 460 120 L 520 120" />
+                <line id="glow-start" class="current-glow" d="M 50 260 L 120 260" />
+                <line id="glow-t1" class="current-glow" x1="160" y1="240" x2="360" y2="240" />
+                <line id="glow-t2" class="current-glow" x1="160" y1="280" x2="360" y2="280" />
+                <line id="glow-t3" class="current-glow" x1="440" y1="240" x2="640" y2="240" />
+                <line id="glow-t4" class="current-glow" x1="440" y1="280" x2="640" y2="280" />
+                <path id="glow-end" class="current-glow" d="M 680 260 L 730 260 L 730 140 L 400 140 L 400 115" />
 
-                <line id="s1-arm" class="switch-arm" x1="100" y1="165" x2="130" y2="145" />
-                <g id="s2-arms">
-                    <line id="s2-arm-1" class="switch-arm" x1="250" y1="145" x2="310" y2="145" />
-                    <line id="s2-arm-2" class="switch-arm" x1="250" y1="185" x2="310" y2="185" />
+                <line id="s1-arm" class="switch-arm" x1="120" y1="260" x2="160" y2="240" />
+                <line id="s2-arm-a" class="switch-arm" x1="360" y1="240" x2="440" y2="240" />
+                <line id="s2-arm-b" class="switch-arm" x1="360" y1="280" x2="440" y2="280" />
+                <line id="s3-arm" class="switch-arm" x1="680" y1="260" x2="640" y2="240" />
+
+                <g id="lamp-group" class="lamp-off">
+                    <circle class="bulb-circle lamp-symbol" cx="400" cy="95" r="22" />
+                    <line class="bulb-cross lamp-symbol" x1="384" y1="79" x2="416" y2="111" />
+                    <line class="bulb-cross lamp-symbol" x1="416" y1="79" x2="384" y2="111" />
                 </g>
-                <line id="s3-arm" class="switch-arm" x1="460" y1="165" x2="430" y2="145" />
-
-                <circle id="lamp-bulb" cx="520" cy="100" r="20" class="lamp-off" />
                 
-                <text x="50" y="225" font-size="12" font-weight="bold" fill="#d9534f">PHASE (L)</text>
+                <text x="50" y="285" font-size="12" font-weight="bold" fill="#d9534f">PHASE (L)</text>
                 <text x="50" y="30" font-size="12" font-weight="bold" fill="#337ab7">NEUTRAL (N)</text>
+                <text x="125" y="310" font-size="11" fill="#666">S1</text>
+                <text x="385" y="310" font-size="11" fill="#666">S2 (Int.)</text>
+                <text x="645" y="310" font-size="11" fill="#666">S3</text>
             </svg>
 
-            <div style="margin: 20px 0;">
-                <button onclick="toggleSwitch(1)" style="padding:10px 15px; cursor:pointer; background:var(--primary); color:white; border:none; border-radius:5px;">S1 (2-Way)</button>
-                <button onclick="toggleSwitch(2)" style="padding:10px 15px; cursor:pointer; background:var(--primary); color:white; border:none; border-radius:5px; margin-left:10px;">S2 (Intermediate)</button>
-                <button onclick="toggleSwitch(3)" style="padding:10px 15px; cursor:pointer; background:var(--primary); color:white; border:none; border-radius:5px; margin-left:10px;">S3 (2-Way)</button>
+            <div class="btn-container">
+                <button onclick="toggleSwitch(1)">Toggle Switch 1</button>
+                <button onclick="toggleSwitch(2)">Toggle Switch 2</button>
+                <button onclick="toggleSwitch(3)">Toggle Switch 3</button>
             </div>
-
-            <table id="truth-table">
-                <thead><tr><th>S1</th><th>S2</th><th>S3</th><th>Lamp</th></tr></thead>
-                <tbody>
-                    <tr id="row-1"><td>UP</td><td>STRAIGHT</td><td>UP</td><td style="color:green">GLOWING</td></tr>
-                    <tr id="row-2"><td>DOWN</td><td>STRAIGHT</td><td>UP</td><td style="color:red">OFF</td></tr>
-                    <tr id="row-3"><td>DOWN</td><td>CROSSED</td><td>UP</td><td style="color:green">GLOWING</td></tr>
-                    <tr id="row-4"><td>DOWN</td><td>CROSSED</td><td>DOWN</td><td style="color:red">OFF</td></tr>
-                </tbody>
-            </table>
         </div>
     </section>
 
@@ -164,64 +141,65 @@
             <li>Always switch off the main supply and remove the fuse before commencing any wiring work to prevent electric shock.</li>
             <li>Ensure that the Phase wire is always connected to the switches and never directly to the lamp.</li>
             <li>Check the continuity of the intermediate switch in both positions using a multimeter before installation.</li>
-            <li>Use 24 TPI hacksaw blades for cutting PVC conduit to ensure smooth edges that won't damage wire insulation.</li>
-            <li>Keep an extra 200mm to 300mm of cable at each switch board for proper termination and future maintenance.</li>
-            <li>Ensure all screw connections are tight to prevent sparking and potential fire hazards.</li>
-            <li>Fix PVC conduit pipes securely with saddles at regular intervals to prevent mechanical strain on wires.</li>
+            <li>Ensure all screw connections are tight; loose connections can lead to overheating and potential fires.</li>
+            <li>Keep an extra 200mm to 300mm of cable length at each termination point for comfortable wiring.</li>
         </ul>
     </section>
 
     <script>
-        let s1 = 'up', s2 = 'straight', s3 = 'up';
-
-        function openPopup(id, title) {
-            document.getElementById("popupImg").src = `https://drive.google.com/uc?id=${id}`;
-            document.getElementById("popupTitle").innerText = title;
-            document.getElementById("imagePopup").style.display = "flex";
-        }
-        function closePopup() { document.getElementById("imagePopup").style.display = "none"; }
+        // Initial logical states (false = UP position, true = DOWN position)
+        let s1 = false, s2 = false, s3 = false;
 
         function toggleSwitch(n) {
-            if(n===1) s1 = (s1 === 'up') ? 'down' : 'up';
-            if(n===2) s2 = (s2 === 'straight') ? 'crossed' : 'straight';
-            if(n===3) s3 = (s3 === 'up') ? 'down' : 'up';
+            if(n===1) s1 = !s1;
+            if(n===2) s2 = !s2;
+            if(n===3) s3 = !s3;
             updateUI();
         }
 
         function updateUI() {
-            document.getElementById('s1-arm').setAttribute('y2', s1 === 'up' ? '145' : '185');
-            document.getElementById('s3-arm').setAttribute('y2', s3 === 'up' ? '145' : '185');
+            // Update physical arm positions
+            document.getElementById('s1-arm').setAttribute('y2', s1 ? '280' : '240');
+            document.getElementById('s3-arm').setAttribute('y2', s3 ? '280' : '240');
             
-            const s2a = document.getElementById('s2-arm-1');
-            const s2b = document.getElementById('s2-arm-2');
-            if(s2 === 'straight') {
-                s2a.setAttribute('y2', '145'); s2b.setAttribute('y2', '185');
-            } else {
-                s2a.setAttribute('y2', '185'); s2b.setAttribute('y2', '145');
+            const s2a = document.getElementById('s2-arm-a');
+            const s2b = document.getElementById('s2-arm-b');
+            if(!s2) { // Straight
+                s2a.setAttribute('y2', '240'); s2b.setAttribute('y2', '280');
+            } else { // Crossed
+                s2a.setAttribute('y2', '280'); s2b.setAttribute('y2', '240');
             }
 
-            let isOn = (s1 === 'up' && s2 === 'straight' && s3 === 'up') ||
-                       (s1 === 'down' && s2 === 'crossed' && s3 === 'up') ||
-                       (s1 === 'down' && s2 === 'straight' && s3 === 'down') ||
-                       (s1 === 'up' && s2 === 'crossed' && s3 === 'down');
+            // XOR Logic: flipping any switch toggles the lamp
+            // Initial state (false, false, false) = Lamp ON (Bright)
+            let isBright = !(s1 ^ s2 ^ s3); 
 
-            document.getElementById('lamp-bulb').className = isOn ? 'lamp-on' : 'lamp-off';
+            // Apply lamp style
+            const lampGroup = document.getElementById('lamp-group');
+            lampGroup.setAttribute('class', isBright ? 'lamp-on' : 'lamp-off');
             
-            const glows = ['glow-p1', 'glow-t1', 'glow-t2', 'glow-t3', 'glow-t4', 'glow-out'];
+            // Manage wire glow paths
+            const glows = ['glow-start', 'glow-t1', 'glow-t2', 'glow-t3', 'glow-t4', 'glow-end'];
             glows.forEach(g => document.getElementById(g).style.display = 'none');
             
-            if(isOn) {
-                document.getElementById('glow-p1').style.display = 'block';
-                document.getElementById('glow-out').style.display = 'block';
-                let activeT = (s1 === 'up') ? 'glow-t1' : 'glow-t2';
+            if(isBright) {
+                document.getElementById('glow-start').style.display = 'block';
+                document.getElementById('glow-end').style.display = 'block';
+                
+                // Track path through S1
+                let activeT = (!s1) ? 'glow-t1' : 'glow-t2';
                 document.getElementById(activeT).style.display = 'block';
-                if(s2 === 'straight') {
+                
+                // Track through Intermediate S2
+                if(!s2) { // Straight path
                     document.getElementById(activeT === 'glow-t1' ? 'glow-t3' : 'glow-t4').style.display = 'block';
-                } else {
+                } else { // Crossed path
                     document.getElementById(activeT === 'glow-t1' ? 'glow-t4' : 'glow-t3').style.display = 'block';
                 }
             }
         }
+        
+        // Initial run to set the starting state (Lamp ON)
         updateUI();
     </script>
 </body>
