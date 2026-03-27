@@ -3,204 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One Lamp Controlled from 3 Places</title>
+    <title>One lamp control from three places</title>
     <style>
-        :root { --primary: #1a5f7a; --bg: #f4f7f6; --text: #333; --danger: #d9534f; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: #fdfdfd; color: var(--text); line-height: 1.6; padding: 20px; max-width: 1100px; margin: auto; }
-        section { background: white; margin-bottom: 30px; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        h2 { color: var(--primary); border-left: 6px solid var(--primary); padding-left: 15px; text-transform: uppercase; font-size: 1.3em; margin-bottom: 20px; }
+        :root { --primary: #1a5f7a; --bg: #f4f7f6; --text: #333; --accent: #e74c3c; --success: #27ae60; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); padding: 20px; max-width: 850px; margin: auto; line-height: 1.6; }
         
-        /* Grid Layout */
-        .req-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .req-card { background: white; border: 1px solid #eee; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; height: 220px; transition: 0.3s; }
-        .req-card:hover { border-color: var(--primary); transform: translateY(-3px); }
-        .img-container { width: 100%; height: 130px; background: #f9f9f9; display: flex; align-items: center; justify-content: center; padding: 10px; }
-        .img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .card-info { padding: 10px; text-align: center; font-weight: bold; font-size: 0.9em; }
-
-        /* Simulation Box */
-        .demo-box { display: flex; flex-direction: column; align-items: center; background: var(--bg); padding: 30px; border-radius: 15px; border: 2px dashed var(--primary); }
-        #circuit-svg { background: white; border-radius: 10px; border: 1px solid #ddd; width: 100%; max-width: 800px; height: auto; }
+        section { background: white; margin-bottom: 20px; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        h2 { color: var(--primary); border-left: 4px solid var(--primary); padding-left: 12px; text-transform: uppercase; font-size: 1.1rem; margin-top: 0; }
         
-        /* Wiring Styles */
-        .wire { fill: none; stroke-width: 3; stroke-linecap: round; }
-        .wire-phase { stroke: var(--danger); }
-        .wire-neutral { stroke: #337ab7; }
-        .wire-fixed { stroke: #ddd; stroke-dasharray: 4; } 
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.95rem; }
+        th { background: var(--primary); color: white; padding: 12px; text-align: left; }
+        td { padding: 10px; border: 1px solid #eee; }
         
-        /* Current Animation Glow */
-        .current-glow { stroke: #ffeb3b; stroke-width: 5; stroke-dasharray: 10; animation: flowAnim 1s linear infinite; display: none; fill: none; }
-        @keyframes flowAnim { from { stroke-dashoffset: 20; } to { stroke-dashoffset: 0; } }
+        .tool-link { color: #2980b9; text-decoration: none; font-weight: bold; }
+        .tool-link:hover { color: var(--accent); text-decoration: underline; }
 
-        /* Lamp Symbol States */
-        .lamp-symbol { stroke-width: 2.5; transition: 0.4s ease; }
-        .lamp-on .bulb-circle { fill: #fff700; filter: drop-shadow(0 0 20px #ffea00); stroke: #d4af37; }
-        .lamp-on .bulb-cross { stroke: #b8860b; }
+        .sim-box { background: #fff; border: 2px solid #ddd; border-radius: 8px; padding: 15px; text-align: center; }
+        #circuit-svg { width: 100%; max-width: 600px; height: auto; }
+        .wire { fill: none; stroke-width: 5; stroke: #ccc; transition: 0.3s; }
+        .live { stroke: var(--accent); stroke-dasharray: 8; animation: flow 1s linear infinite; }
+        @keyframes flow { to { stroke-dashoffset: -16; } }
+        .lamp-on { fill: #ffeb3b; filter: drop-shadow(0 0 10px #ffeb3b); }
         
-        .lamp-off .bulb-circle { fill: #000000; stroke: #000; }
-        .lamp-off .bulb-cross { stroke: #444; }
-
-        .switch-arm { stroke: #333; stroke-width: 6; stroke-linecap: round; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .btn-container { margin: 25px 0; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
-        button { padding: 12px 24px; cursor: pointer; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; transition: 0.2s; }
-        button:hover { background: #13495f; transform: scale(1.05); }
-        button:active { transform: scale(0.95); }
-
-        .procedure-steps { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; width: 100%; border: 1px solid #eee; }
-        .procedure-steps ol { padding-left: 20px; margin: 0; }
-        .procedure-steps li { margin-bottom: 8px; font-size: 0.95em; }
+        button { padding: 10px 18px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; font-weight: bold; }
+        .active-row { background-color: #fff9c4 !important; font-weight: bold; border: 2px solid var(--primary); }
+        .status-pill { padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; }
+        .pill-on { background: #d4edda; color: #155724; }
+        .pill-off { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
 
-    <section>
-        <h2>Aim</h2>
-        <p>To wire up PVC conduit wiring to control one lamp from three different places using two 2-way switches and one intermediate switch.</p>
-    </section>
+<section>
+    <h2>Aim</h2>
+    <p>To control a single lamp from three different locations using two 2-way switches and one intermediate switch in a PVC conduit wiring system.</p>
+</section>
 
-    <section>
-        <h2>Requirements</h2>
-        <div class="req-grid">
-            <div class="req-card">
-                <div class="img-container"><img src="https://drive.google.com/uc?id=1-93efW9X2Dp_4deZ5t5ZoyKOTF9CAIS3" alt="Screwdriver"></div>
-                <div class="card-info">Insulated Screwdriver</div>
-            </div>
-            <div class="req-card">
-                <div class="img-container"><img src="https://drive.google.com/uc?id=1rQQdHT0pDf_uZEz6agZdjPMiw56fIBg7" alt="Tester"></div>
-                <div class="card-info">Neon Tester</div>
-            </div>
-            <div class="req-card">
-                <div class="img-container"><img src="https://drive.google.com/uc?id=1qhdNZaYP1THhpsZvklXP2wWtsUe9ixYY" alt="Cable"></div>
-                <div class="card-info">PVC Insulated Cable</div>
-            </div>
+<section>
+    <h2>Apparatus & Materials</h2>
+    <table id="app-table">
+        <thead>
+            <tr>
+                <th>Sr.</th>
+                <th>Materials & Tools </th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody id="tool-table"></tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Theory</h2>
+    <p>The control of a single lamp from more than two locations is essential in large halls, long corridors, and multi-story staircases. This circuit utilizes the properties of <strong>2-Way Switches</strong> and <strong>Intermediate Switches</strong>.</p>
+    
+    <ul>
+        <li><strong>2-Way Switch:</strong> Has three terminals (Common, L1, L2). In one position, Common is connected to L1; in the other, it connects to L2.</li>
+        <li><strong>Intermediate Switch:</strong> Has four terminals. It acts as a "reversing switch." In the straight position, it connects the input pairs directly to the output pairs. In the cross position, it swaps the connection of the travelers, effectively toggling the circuit state regardless of the other switches' positions.</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Circuit Simulation & Observations</h2>
+    <div class="sim-box">
+        <svg id="circuit-svg" viewBox="0 0 800 300">
+            <path d="M 50 50 L 400 50 L 400 80" class="wire" style="stroke: #3498db;"/>
+            <path id="w-p" class="wire" d="M 50 250 L 140 250" />
+            <line id="w-t1" class="wire" x1="180" y1="220" x2="350" y2="220" />
+            <line id="w-t2" class="wire" x1="180" y1="280" x2="350" y2="280" />
+            <line id="w-t3" class="wire" x1="450" y1="220" x2="620" y2="220" />
+            <line id="w-t4" class="wire" x1="450" y1="280" x2="620" y2="280" />
+            <path id="w-out" class="wire" d="M 660 250 L 730 250 L 730 120 L 400 120 L 400 100" />
+            <line id="s1-arm" style="stroke:#000; stroke-width:10; stroke-linecap:round;" x1="140" y1="250" x2="180" y2="220" />
+            <line id="s2-arm1" style="stroke:#000; stroke-width:10; stroke-linecap:round;" x1="350" y1="220" x2="450" y2="220" />
+            <line id="s2-arm2" style="stroke:#000; stroke-width:10; stroke-linecap:round;" x1="350" y1="280" x2="450" y2="280" />
+            <line id="s3-arm" style="stroke:#000; stroke-width:10; stroke-linecap:round;" x1="660" y1="250" x2="620" y2="220" />
+            <circle id="bulb" fill="#444" cx="400" cy="100" r="22" stroke="#000" />
+        </svg>
+        <div>
+            <button onclick="toggle(1)">Switch 1</button>
+            <button onclick="toggle(2)">Intermediate</button>
+            <button onclick="toggle(3)">Switch 3</button>
         </div>
-    </section>
+    </div>
 
-    <section>
-        <h2>Demonstration</h2>
-        <div class="demo-box">
-            <div class="procedure-steps">
-                <strong>Installation Procedure:</strong>
-                <ol>
-                    <li>Connect the Phase wire to the common terminal of Switch 1 (S1).</li>
-                    <li>Connect travelers from S1 to the first set of terminals on the Intermediate Switch (S2).</li>
-                    <li>Connect the second set of terminals on S2 to the travelers of Switch 3 (S3).</li>
-                    <li>Connect the common terminal of S3 to the Lamp holder.</li>
-                    <li>Connect the Neutral wire directly to the lamp holder to complete the circuit.</li>
-                </ol>
-            </div>
+    <table id="truth-table">
+        <thead>
+            <tr>
+                <th>Switch 1</th>
+                <th>Intermediate</th>
+                <th>Switch 3</th>
+                <th>Lamp Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr id="row-000"><td>UP (0)</td><td>STRAIGHT (0)</td><td>UP (0)</td><td><span class="status-pill pill-on">ON</span></td></tr>
+            <tr id="row-100"><td>DOWN (1)</td><td>STRAIGHT (0)</td><td>UP (0)</td><td><span class="status-pill pill-off">OFF</span></td></tr>
+            <tr id="row-010"><td>UP (0)</td><td>CROSS (1)</td><td>UP (0)</td><td><span class="status-pill pill-off">OFF</span></td></tr>
+            <tr id="row-110"><td>DOWN (1)</td><td>CROSS (1)</td><td>UP (0)</td><td><span class="status-pill pill-on">ON</span></td></tr>
+            <tr id="row-001"><td>UP (0)</td><td>STRAIGHT (0)</td><td>DOWN (1)</td><td><span class="status-pill pill-off">OFF</span></td></tr>
+            <tr id="row-101"><td>DOWN (1)</td><td>STRAIGHT (0)</td><td>DOWN (1)</td><td><span class="status-pill pill-on">ON</span></td></tr>
+            <tr id="row-011"><td>UP (0)</td><td>CROSS (1)</td><td>DOWN (1)</td><td><span class="status-pill pill-on">ON</span></td></tr>
+            <tr id="row-111"><td>DOWN (1)</td><td>CROSS (1)</td><td>DOWN (1)</td><td><span class="status-pill pill-off">OFF</span></td></tr>
+        </tbody>
+    </table>
+</section>
 
-            <svg id="circuit-svg" viewBox="0 0 800 320">
-                <path class="wire wire-neutral" d="M 50 40 L 400 40 L 400 75" />
-                
-                <path class="wire wire-phase" d="M 50 260 L 120 260" />
-                
-                <line class="wire wire-fixed" x1="160" y1="240" x2="360" y2="240" />
-                <line class="wire wire-fixed" x1="160" y1="280" x2="360" y2="280" />
-                <line class="wire wire-fixed" x1="440" y1="240" x2="640" y2="240" />
-                <line class="wire wire-fixed" x1="440" y1="280" x2="640" y2="280" />
-                
-                <path class="wire wire-phase" d="M 680 260 L 730 260 L 730 140 L 400 140 L 400 115" />
+<section>
+    <h2>Safety Precautions</h2>
+    <ul>
+        <li>Ensure the main power supply is switched <strong>OFF</strong> before starting any wiring connections.</li>
+        <li>Always connect the <strong>Phase (Live)</strong> wire to the switch, never the neutral wire, to prevent electric shock when the bulb is removed.</li>
+        <li>Use a neon tester to verify that no current is flowing through the wires before touching them.</li>
+        <li>Ensure all wire joints and terminal screws are tight to avoid sparking or heating.</li>
+        <li>Wear rubber-soled shoes or stand on an insulating mat while testing the live circuit.</li>
+    </ul>
+</section>
 
-                <line id="glow-start" class="current-glow" d="M 50 260 L 120 260" />
-                <line id="glow-t1" class="current-glow" x1="160" y1="240" x2="360" y2="240" />
-                <line id="glow-t2" class="current-glow" x1="160" y1="280" x2="360" y2="280" />
-                <line id="glow-t3" class="current-glow" x1="440" y1="240" x2="640" y2="240" />
-                <line id="glow-t4" class="current-glow" x1="440" y1="280" x2="640" y2="280" />
-                <path id="glow-end" class="current-glow" d="M 680 260 L 730 260 L 730 140 L 400 140 L 400 115" />
+<section>
+    <h2>Result</h2>
+    <p>The 3-way control circuit was successfully assembled using two 2-way switches and one intermediate switch. Through systematic testing, it was verified that the lamp could be toggled <strong>ON</strong> or <strong>OFF</strong> from any of the three locations independently. The truth table observations confirm the crossover logic of the intermediate switch.</p>
+</section>
 
-                <line id="s1-arm" class="switch-arm" x1="120" y1="260" x2="160" y2="240" />
-                <line id="s2-arm-a" class="switch-arm" x1="360" y1="240" x2="440" y2="240" />
-                <line id="s2-arm-b" class="switch-arm" x1="360" y1="280" x2="440" y2="280" />
-                <line id="s3-arm" class="switch-arm" x1="680" y1="260" x2="640" y2="240" />
+<script>
+    const tools = [
+        { sr: 1, name: "Combination Plier", id: "1Tx16owoZAoz31yRVqUW_f3Fjqb07Foiw", qty: "01 Nos." },
+        { sr: 2, name: "Screw Driver Set", id: "1-93efW9X2Dp_4deZ5t5ZoyKOTF9CAIS3", qty: "01 Set" },
+        { sr: 3, name: "Neon Tester", id: "1rQQdHT0pDf_uZEz6agZdjPMiw56fIBg7", qty: "01 Nos." },
+        { sr: 4, name: "Two Way Switch", id: "1S19INURN9aUDCMI26rB_wknEkfihbacs", qty: "02 Nos." },
+        { sr: 5, name: "Intermediate Switch", id: "1S19INURN9aUDCMI26rB_wknEkfihbacs", qty: "01 Nos." }
+    ];
 
-                <g id="lamp-group" class="lamp-off">
-                    <circle class="bulb-circle lamp-symbol" cx="400" cy="95" r="22" />
-                    <line class="bulb-cross lamp-symbol" x1="384" y1="79" x2="416" y2="111" />
-                    <line class="bulb-cross lamp-symbol" x1="416" y1="79" x2="384" y2="111" />
-                </g>
-                
-                <text x="50" y="285" font-size="12" font-weight="bold" fill="#d9534f">PHASE (L)</text>
-                <text x="50" y="30" font-size="12" font-weight="bold" fill="#337ab7">NEUTRAL (N)</text>
-                <text x="125" y="310" font-size="11" fill="#666">S1</text>
-                <text x="385" y="310" font-size="11" fill="#666">S2 (Int.)</text>
-                <text x="645" y="310" font-size="11" fill="#666">S3</text>
-            </svg>
+    const tBody = document.getElementById('tool-table');
+    tools.forEach(t => {
+        tBody.innerHTML += `<tr><td>${t.sr}</td><td><a href="https://drive.google.com/file/d/${t.id}/view" target="_blank" class="tool-link">${t.name}</a></td><td>${t.qty}</td></tr>`;
+    });
 
-            <div class="btn-container">
-                <button onclick="toggleSwitch(1)">Toggle Switch 1</button>
-                <button onclick="toggleSwitch(2)">Toggle Switch 2</button>
-                <button onclick="toggleSwitch(3)">Toggle Switch 3</button>
-            </div>
-        </div>
-    </section>
+    let s1=0, s2=0, s3=0;
+    function toggle(n) {
+        if(n===1) s1=1-s1; if(n===2) s2=1-s2; if(n===3) s3=1-s3;
+        update();
+    }
 
-    <section>
-        <h2>Safety & Precautions</h2>
-        <ul>
-            <li>Always switch off the main supply and remove the fuse before commencing any wiring work to prevent electric shock.</li>
-            <li>Ensure that the Phase wire is always connected to the switches and never directly to the lamp.</li>
-            <li>Check the continuity of the intermediate switch in both positions using a multimeter before installation.</li>
-            <li>Ensure all screw connections are tight; loose connections can lead to overheating and potential fires.</li>
-            <li>Keep an extra 200mm to 300mm of cable length at each termination point for comfortable wiring.</li>
-        </ul>
-    </section>
-
-    <script>
-        // Initial logical states (false = UP position, true = DOWN position)
-        let s1 = false, s2 = false, s3 = false;
-
-        function toggleSwitch(n) {
-            if(n===1) s1 = !s1;
-            if(n===2) s2 = !s2;
-            if(n===3) s3 = !s3;
-            updateUI();
+    function update() {
+        document.getElementById('s1-arm').setAttribute('y2', s1===0?220:280);
+        document.getElementById('s3-arm').setAttribute('y2', s3===0?220:280);
+        if(s2===0) { 
+            document.getElementById('s2-arm1').setAttribute('y2', 220); 
+            document.getElementById('s2-arm2').setAttribute('y2', 280); 
+        } else { 
+            document.getElementById('s2-arm1').setAttribute('y2', 280); 
+            document.getElementById('s2-arm2').setAttribute('y2', 220); 
         }
 
-        function updateUI() {
-            // Update physical arm positions
-            document.getElementById('s1-arm').setAttribute('y2', s1 ? '280' : '240');
-            document.getElementById('s3-arm').setAttribute('y2', s3 ? '280' : '240');
-            
-            const s2a = document.getElementById('s2-arm-a');
-            const s2b = document.getElementById('s2-arm-b');
-            if(!s2) { // Straight
-                s2a.setAttribute('y2', '240'); s2b.setAttribute('y2', '280');
-            } else { // Crossed
-                s2a.setAttribute('y2', '280'); s2b.setAttribute('y2', '240');
-            }
+        const isOn = (s1 ^ s2 ^ s3) === 0;
+        document.querySelectorAll('.wire').forEach(w => w.classList.remove('live'));
+        document.getElementById('w-p').classList.add('live');
+        document.getElementById(s1===0?'w-t1':'w-t2').classList.add('live');
+        let t2 = s2===0 ? (s1===0?'w-t3':'w-t4') : (s1===0?'w-t4':'w-t3');
+        document.getElementById(t2).classList.add('live');
 
-            // XOR Logic: flipping any switch toggles the lamp
-            // Initial state (false, false, false) = Lamp ON (Bright)
-            let isBright = !(s1 ^ s2 ^ s3); 
-
-            // Apply lamp style
-            const lampGroup = document.getElementById('lamp-group');
-            lampGroup.setAttribute('class', isBright ? 'lamp-on' : 'lamp-off');
-            
-            // Manage wire glow paths
-            const glows = ['glow-start', 'glow-t1', 'glow-t2', 'glow-t3', 'glow-t4', 'glow-end'];
-            glows.forEach(g => document.getElementById(g).style.display = 'none');
-            
-            if(isBright) {
-                document.getElementById('glow-start').style.display = 'block';
-                document.getElementById('glow-end').style.display = 'block';
-                
-                // Track path through S1
-                let activeT = (!s1) ? 'glow-t1' : 'glow-t2';
-                document.getElementById(activeT).style.display = 'block';
-                
-                // Track through Intermediate S2
-                if(!s2) { // Straight path
-                    document.getElementById(activeT === 'glow-t1' ? 'glow-t3' : 'glow-t4').style.display = 'block';
-                } else { // Crossed path
-                    document.getElementById(activeT === 'glow-t1' ? 'glow-t4' : 'glow-t3').style.display = 'block';
-                }
-            }
+        if(isOn) {
+            document.getElementById('w-out').classList.add('live');
+            document.getElementById('bulb').classList.add('lamp-on');
+        } else {
+            document.getElementById('bulb').classList.remove('lamp-on');
         }
-        
-        // Initial run to set the starting state (Lamp ON)
-        updateUI();
-    </script>
+
+        document.querySelectorAll('#truth-table tbody tr').forEach(r => r.classList.remove('active-row'));
+        document.getElementById(`row-${s1}${s2}${s3}`).classList.add('active-row');
+    }
+    update();
+</script>
 </body>
 </html>
