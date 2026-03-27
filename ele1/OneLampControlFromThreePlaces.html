@@ -10,26 +10,33 @@
         
         section { background: white; margin-bottom: 20px; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         h2 { color: var(--primary); border-left: 4px solid var(--primary); padding-left: 12px; text-transform: uppercase; font-size: 1.1rem; margin-top: 0; }
-        
+        h3 { color: var(--primary); font-size: 1rem; margin-top: 25px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+
         table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.95rem; }
         th { background: var(--primary); color: white; padding: 12px; text-align: left; }
         td { padding: 10px; border: 1px solid #eee; }
         
-        .tool-link { color: #2980b9; text-decoration: none; font-weight: bold; }
-        .tool-link:hover { color: var(--accent); text-decoration: underline; }
-
         .sim-box { background: #fff; border: 2px solid #ddd; border-radius: 8px; padding: 15px; text-align: center; }
         #circuit-svg { width: 100%; max-width: 600px; height: auto; }
         .wire { fill: none; stroke-width: 5; stroke: #ccc; transition: 0.3s; }
         .live { stroke: var(--accent); stroke-dasharray: 8; animation: flow 1s linear infinite; }
         @keyframes flow { to { stroke-dashoffset: -16; } }
-        .lamp-on { fill: #ffeb3b; filter: drop-shadow(0 0 10px #ffeb3b); }
+        
+        /* Standard Lamp Symbol Styling */
+        .lamp-circle { fill: #fff; stroke: #000; stroke-width: 3; transition: 0.3s; }
+        .lamp-cross { stroke: #000; stroke-width: 3; transition: 0.3s; }
+        .lamp-on .lamp-circle { fill: #fff176; stroke: #fbc02d; filter: drop-shadow(0 0 8px #fff176); }
+        .lamp-on .lamp-cross { stroke: #fbc02d; }
+        
+        .label-text { font-size: 14px; font-weight: bold; fill: #555; font-family: sans-serif; }
         
         button { padding: 10px 18px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; font-weight: bold; }
         .active-row { background-color: #fff9c4 !important; font-weight: bold; border: 2px solid var(--primary); }
         .status-pill { padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; }
         .pill-on { background: #d4edda; color: #155724; }
         .pill-off { background: #f8d7da; color: #721c24; }
+        
+        ol li { margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -40,12 +47,12 @@
 </section>
 
 <section>
-    <h2>Apparatus & Materials</h2>
+    <h2>Requirements</h2>
     <table id="app-table">
         <thead>
             <tr>
                 <th>Sr.</th>
-                <th>Materials & Tools </th>
+                <th>Tools/Materials/Machines</th>
                 <th>Quantity</th>
             </tr>
         </thead>
@@ -56,7 +63,6 @@
 <section>
     <h2>Theory</h2>
     <p>The control of a single lamp from more than two locations is essential in large halls, long corridors, and multi-story staircases. This circuit utilizes the properties of <strong>2-Way Switches</strong> and <strong>Intermediate Switches</strong>.</p>
-    
     <ul>
         <li><strong>2-Way Switch:</strong> Has three terminals (Common, L1, L2). In one position, Common is connected to L1; in the other, it connects to L2.</li>
         <li><strong>Intermediate Switch:</strong> Has four terminals. It acts as a "reversing switch." In the straight position, it connects the input pairs directly to the output pairs. In the cross position, it swaps the connection of the travelers, effectively toggling the circuit state regardless of the other switches' positions.</li>
@@ -64,21 +70,52 @@
 </section>
 
 <section>
-    <h2>Circuit Simulation & Observations</h2>
+    <h2>Procedure</h2>
+    <ol>
+        <li>Check the continuity of the switches, lamp holder, and wires using a neon tester or multimeter.</li>
+        <li>Mount the PVC conduits, junction boxes, and switch boxes on the wooden wiring board according to the layout.</li>
+        <li>Draw the <strong>Phase (L)</strong> wire through the conduit and connect it to the <strong>Common terminal</strong> of the first 2-way switch (Switch 1).</li>
+        <li>Connect the two outgoing <strong>Traveler wires</strong> from Switch 1 to the input terminals of the Intermediate switch.</li>
+        <li>Connect the output terminals of the Intermediate switch to the two traveler terminals of the third switch (Switch 3).</li>
+        <li>Connect the <strong>Common terminal</strong> of Switch 3 to one terminal of the lamp holder.</li>
+        <li>Connect the <strong>Neutral (N)</strong> wire directly from the source to the other terminal of the lamp holder.</li>
+        <li>Provide power supply and verify the operation by toggling each switch independently.</li>
+    </ol>
+</section>
+
+<section>
+    <h2>Circuit Diagram</h2>
     <div class="sim-box">
-        <svg id="circuit-svg" viewBox="0 0 800 300">
-            <path d="M 50 50 L 400 50 L 400 80" class="wire" style="stroke: #3498db;"/>
-            <path id="w-p" class="wire" d="M 50 250 L 140 250" />
+        <svg id="circuit-svg" viewBox="0 0 800 340">
+            <text x="10" y="55" class="label-text">Neutral (N)</text>
+            <text x="10" y="255" class="label-text">Phase (L)</text>
+            
+            <path d="M 80 50 L 400 50 L 400 78" class="wire" style="stroke: #3498db;"/>
+            
+            <path id="w-p" class="wire" d="M 80 250 L 140 250" />
+            
             <line id="w-t1" class="wire" x1="180" y1="220" x2="350" y2="220" />
             <line id="w-t2" class="wire" x1="180" y1="280" x2="350" y2="280" />
             <line id="w-t3" class="wire" x1="450" y1="220" x2="620" y2="220" />
             <line id="w-t4" class="wire" x1="450" y1="280" x2="620" y2="280" />
-            <path id="w-out" class="wire" d="M 660 250 L 730 250 L 730 120 L 400 120 L 400 100" />
+            
+            <path id="w-out" class="wire" d="M 660 250 L 730 250 L 730 120 L 422 120 L 422 100" />
+            
             <line id="s1-arm" style="stroke:#000; stroke-width:10; stroke-linecap:round;" x1="140" y1="250" x2="180" y2="220" />
             <line id="s2-arm1" style="stroke:#000; stroke-width:10; stroke-linecap:round;" x1="350" y1="220" x2="450" y2="220" />
             <line id="s2-arm2" style="stroke:#000; stroke-width:10; stroke-linecap:round;" x1="350" y1="280" x2="450" y2="280" />
             <line id="s3-arm" style="stroke:#000; stroke-width:10; stroke-linecap:round;" x1="660" y1="250" x2="620" y2="220" />
-            <circle id="bulb" fill="#444" cx="400" cy="100" r="22" stroke="#000" />
+            
+            <g id="lamp-symbol">
+                <circle class="lamp-circle" cx="400" cy="100" r="22" />
+                <line class="lamp-cross" x1="384.5" y1="84.5" x2="415.5" y2="115.5" />
+                <line class="lamp-cross" x1="415.5" y1="84.5" x2="384.5" y2="115.5" />
+            </g>
+            
+            <text x="135" y="310" class="label-text" text-anchor="middle">Switch 1</text>
+            <text x="400" y="310" class="label-text" text-anchor="middle">Switch 2 (Intermediate)</text>
+            <text x="650" y="310" class="label-text" text-anchor="middle">Switch 3</text>
+            <text x="400" y="145" class="label-text" text-anchor="middle">Lamp</text>
         </svg>
         <div>
             <button onclick="toggle(1)">Switch 1</button>
@@ -87,6 +124,7 @@
         </div>
     </div>
 
+    <h3>Observation Table</h3>
     <table id="truth-table">
         <thead>
             <tr>
@@ -127,16 +165,18 @@
 
 <script>
     const tools = [
-        { sr: 1, name: "Combination Plier", id: "1Tx16owoZAoz31yRVqUW_f3Fjqb07Foiw", qty: "01 Nos." },
-        { sr: 2, name: "Screw Driver Set", id: "1-93efW9X2Dp_4deZ5t5ZoyKOTF9CAIS3", qty: "01 Set" },
-        { sr: 3, name: "Neon Tester", id: "1rQQdHT0pDf_uZEz6agZdjPMiw56fIBg7", qty: "01 Nos." },
-        { sr: 4, name: "Two Way Switch", id: "1S19INURN9aUDCMI26rB_wknEkfihbacs", qty: "02 Nos." },
-        { sr: 5, name: "Intermediate Switch", id: "1S19INURN9aUDCMI26rB_wknEkfihbacs", qty: "01 Nos." }
+        { sr: 1, name: "Combination Plier", qty: "01 Nos." },
+        { sr: 2, name: "Screw Driver Set", qty: "01 Set" },
+        { sr: 3, name: "Neon Tester", qty: "01 Nos." },
+        { sr: 4, name: "Two Way Switch", qty: "02 Nos." },
+        { sr: 5, name: "Intermediate Switch", qty: "01 Nos." },
+        { sr: 6, name: "Lamp & Holder", qty: "01 Nos." },
+        { sr: 7, name: "PVC Insulated Wire", qty: "As Required" }
     ];
 
     const tBody = document.getElementById('tool-table');
     tools.forEach(t => {
-        tBody.innerHTML += `<tr><td>${t.sr}</td><td><a href="https://drive.google.com/file/d/${t.id}/view" target="_blank" class="tool-link">${t.name}</a></td><td>${t.qty}</td></tr>`;
+        tBody.innerHTML += `<tr><td>${t.sr}</td><td>${t.name}</td><td>${t.qty}</td></tr>`;
     });
 
     let s1=0, s2=0, s3=0;
@@ -165,9 +205,9 @@
 
         if(isOn) {
             document.getElementById('w-out').classList.add('live');
-            document.getElementById('bulb').classList.add('lamp-on');
+            document.getElementById('lamp-symbol').classList.add('lamp-on');
         } else {
-            document.getElementById('bulb').classList.remove('lamp-on');
+            document.getElementById('lamp-symbol').classList.remove('lamp-on');
         }
 
         document.querySelectorAll('#truth-table tbody tr').forEach(r => r.classList.remove('active-row'));
