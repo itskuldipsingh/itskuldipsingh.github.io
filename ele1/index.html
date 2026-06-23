@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repair and Maintenance of Electric Iron</title>
+    <style>
+        :root { 
+            --primary: #1a5f7a; 
+            --bg: #f8f9fa; 
+            --text: #2d3436; 
+            --danger: #d63031; 
+            --success: #27ae60;
+            --warning: #f39c12; 
+        }
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            line-height: 1.6;
+            padding: 20px; 
+            max-width: 900px; 
+            margin: auto; 
+        }
+
+        /* Sections & Typography */
+        section { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+            margin-bottom: 25px; 
+        }
+        h2 { 
+            color: var(--primary); 
+            border-left: 5px solid var(--primary); 
+            padding-left: 15px; 
+            text-transform: uppercase; 
+            font-size: 1.1rem; 
+            margin-top: 0; 
+        }
+        ul, ol { padding-left: 20px; }
+        li { margin-bottom: 8px; }
+
+        /* Tables */
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* Allows horizontal scroll on very small screens, no vertical limit */
+            margin-top: 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+        th, td { padding: 15px; border: 1px solid #ddd; text-align: left; }
+        th { background: var(--primary); color: white; }
+        tr:nth-child(even) { background-color: #fafafa; }
+
+        /* Continuous Reading Cards - FULL WIDTH IMAGES */
+        .reading-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            overflow: hidden; /* Ensures full-width image doesn't break rounded corners */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .reading-card h3 {
+            margin: 0;
+            padding: 20px;
+            color: var(--primary);
+            background: #fdfdfd;
+            border-bottom: 1px solid #eee;
+            font-size: 1.1rem;
+        }
+        .reading-img-container {
+            width: 100%;
+            background-color: white;
+            margin: 0;
+            padding: 0;
+        }
+        .reading-img-container img {
+            width: 100%; /* Forces image to take full width */
+            height: auto;
+            display: block; /* Removes baseline gap */
+        }
+        .image-error {
+            color: #7f8c8d;
+            font-style: italic;
+            padding: 30px;
+            text-align: center;
+        }
+        .reading-desc {
+            padding: 20px;
+            background: #e8f4f8;
+            border-top: 1px solid #eee;
+            border-left: 5px solid var(--primary);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background: white; max-width: 100%; padding: 0; margin: 0; }
+            section, .reading-card { box-shadow: none; border: 1px solid #ddd; padding: 15px; page-break-inside: avoid; margin-bottom: 15px; }
+            table { page-break-inside: auto; }
+            tr { page-break-inside: avoid; page-break-after: auto; }
+            th { color: black; background: #f1f2f6; border: 1px solid #aaa; }
+            td { border: 1px solid #aaa; }
+            .reading-img-container img { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<section>
+    <h2>Aim</h2>
+    <p>To identify the internal parts of an automatic electric iron, carry out routine maintenance, and perform troubleshooting and repairs for common faults.</p>
+</section>
+
+<section>
+    <h2>Requirements</h2>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Sr. No.</th>
+                    <th>Tools / Instruments / Materials</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>Automatic Electric Iron (Defective/Sample)</td><td>01 No.</td></tr>
+                <tr><td>2</td><td>Multimeter / Continuity Tester</td><td>01 No.</td></tr>
+                <tr><td>3</td><td>Series Testing Board</td><td>01 No.</td></tr>
+                <tr><td>4</td><td>Screwdriver Set & Spanner Set</td><td>01 Set each</td></tr>
+                <tr><td>5</td><td>Insulation Tape & Emery Paper</td><td>As Required</td></tr>
+                <tr><td>6</td><td>Spare Parts (Heating Element, Thermostat, Cord)</td><td>As Required</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section>
+    <h2>Procedure</h2>
+    <p>Review the components and testing procedures below to accurately diagnose the electric iron.</p>
+    
+    <div class="reading-card">
+        <h3>1. All Parts of Electric Iron</h3>
+        <div class="reading-img-container">
+            <img src="electric iron/1.jpg" alt="Parts of Electric Iron" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div class="image-error" style="display: none;">
+                <strong>Image not found.</strong><br>
+                Please ensure you have saved the image as <code>electric iron/1.jpg</code> in the same folder as this HTML file.
+            </div>
+        </div>
+        <div class="reading-desc">
+            <strong>Components Overview:</strong> This image displays all the primary internal and external components of an electric iron, including the Sole Plate, Heating Element, Thermostat, Thermal Fuse, Pilot Lamp, and the outer casing.
+        </div>
+    </div>
+
+    <div class="reading-card">
+        <h3>2. Testing Thermostat Continuity</h3>
+        <div class="reading-img-container">
+            <img src="electric iron/2.jpg" alt="Testing Thermostat Continuity" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div class="image-error" style="display: none;">
+                <strong>Image not found.</strong><br>
+                Please ensure you have saved the image as <code>electric iron/2.jpg</code> in the same folder as this HTML file.
+            </div>
+        </div>
+        <div class="reading-desc">
+            <strong>Thermostat Testing:</strong> To test the thermostat, connect the multimeter probes across its terminals. At room temperature, it should show continuity (near zero resistance). When heated or turned to the 'OFF' position, it should show infinite resistance (open circuit).
+        </div>
+    </div>
+
+    <div class="reading-card">
+        <h3>3. Testing Heating Element</h3>
+        <div class="reading-img-container">
+            <img src="electric iron/3.jpg" alt="Testing Heating Element" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div class="image-error" style="display: none;">
+                <strong>Image not found.</strong><br>
+                Please ensure you have saved the image as <code>electric iron/3.jpg</code> in the same folder as this HTML file.
+            </div>
+        </div>
+        <div class="reading-desc">
+            <strong>Heating Element Testing:</strong> Connect the multimeter probes to the two main terminals of the heating element. A healthy element will show a specific resistance value (typically between 20&Omega; to 60&Omega; depending on the wattage). If it reads infinite, the element is burnt out and must be replaced.
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>Troubleshooting & Repair Procedure</h2>
+    <p>Use a multimeter or series test lamp to diagnose the following common faults before dismantling the iron.</p>
+    
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Symptom / Fault</th>
+                    <th>Possible Causes</th>
+                    <th>Repair Action / Remedy</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Iron is completely dead (No heat, no lamp)</strong></td>
+                    <td>1. Defective supply cord or plug.<br>2. Blown thermal fuse.<br>3. Loose terminal connections.</td>
+                    <td>Check cord continuity using a multimeter. If open, replace the cord. Bypass thermal fuse temporarily to test; if faulty, replace it with exact rating. Tighten all terminal screws.</td>
+                </tr>
+                <tr>
+                    <td><strong>Lamp glows, but iron does not heat</strong></td>
+                    <td>1. Open circuit in heating element.<br>2. Loose connection at heating element terminals.</td>
+                    <td>Dismantle iron and test heating element continuity. If the element is burnt or shows infinite resistance, replace the soleplate/element assembly.</td>
+                </tr>
+                <tr>
+                    <td><strong>Iron gives electric shock</strong></td>
+                    <td>1. Heating element shorted to sole plate (earth fault).<br>2. Bare live wire touching the metallic body.<br>3. Defective earthing in the 3-pin plug.</td>
+                    <td>Test resistance between Live/Neutral pins and Earth pin. If less than 1 M&Omega;, there is a leakage. Replace the heating element. Insulate any bare wires and ensure earth pin is properly connected to the metallic body.</td>
+                </tr>
+                <tr>
+                    <td><strong>Iron overheats and burns clothes</strong></td>
+                    <td>1. Thermostat contacts are welded together.<br>2. Bimetallic strip is warped/defective.</td>
+                    <td>Test thermostat continuity. Clean the thermostat contacts with fine emery paper. If the thermostat fails to 'click' open at high temperatures, replace the complete thermostat unit.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section>
+    <h2>Routine Maintenance</h2>
+    <ol>
+        <li><strong>Cleaning the Sole Plate:</strong> Do not use sharp tools to scrape the sole plate. Wipe it with a damp cloth when slightly warm. For tough stains, use a mild non-abrasive cleaner.</li>
+        <li><strong>Cord Maintenance:</strong> Inspect the cotton-braided supply cord regularly. If the insulation is frayed or wires are exposed near the strain relief bush, cut the damaged portion and remake the connections, or replace the entire cord.</li>
+        <li><strong>Terminal Tightening:</strong> Due to continuous heating and cooling cycles, terminal screws may become loose causing sparking. Periodically open the back cover and tighten the Phase, Neutral, and Earth connections.</li>
+        <li><strong>Vent Cleaning (Steam Irons):</strong> If repairing a steam iron, clean the steam vents using a pin or a solution of equal parts water and vinegar to remove mineral scale buildup.</li>
+    </ol>
+</section>
+
+<section>
+    <h2>Safety & Precautions</h2>
+    <ul>
+        <li>Always disconnect the electric iron from the main power supply and allow it to cool completely before opening the casing.</li>
+        <li>Ensure the <strong>Earth (Green/Yellow)</strong> wire is securely bolted to the metallic body of the iron. This is critical to prevent fatal electric shocks.</li>
+        <li>Never bypass the thermostat or the thermal fuse permanently. They are essential safety devices designed to prevent fire hazards.</li>
+        <li>After any repair, always perform an Insulation Resistance (Megger) test or Earth Continuity test before plugging the iron into the main socket.</li>
+        <li>When replacing components, ensure the replacements (especially heating elements and fuses) match the exact wattage and voltage ratings of the original parts.</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Conclusion</h2>
+    <p>The electric iron was successfully dismantled, inspected, and reassembled. Through the use of systematic testing with a multimeter, various components such as the heating element, thermostat, and supply cord were identified and their operational conditions were verified. The routine maintenance and safety procedures were strictly followed, ensuring the appliance operates safely without earth leakage or overheating hazards.</p>
+</section>
+
+</body>
+</html>
