@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repair and Maintenance of Electric Iron</title>
+    <style>
+        :root { 
+            --primary: #1a5f7a; 
+            --bg: #f8f9fa; 
+            --text: #2d3436; 
+            --danger: #d63031; 
+            --success: #27ae60;
+            --light-grey: #e9ecef;
+        }
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            line-height: 1.6;
+            padding: 20px; 
+            max-width: 950px; 
+            margin: auto; 
+        }
+
+        /* Standard Sections */
+        section { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+            margin-bottom: 25px; 
+            border: 1px solid #eee;
+        }
+        h2 { 
+            color: var(--primary); 
+            border-left: 5px solid var(--primary); 
+            padding-left: 15px; 
+            text-transform: uppercase; 
+            font-size: 1.2rem; 
+            margin-top: 0; 
+        }
+        h3 { color: #34495e; font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        ul, ol { padding-left: 20px; }
+        li { margin-bottom: 8px; }
+
+        /* Tables */
+        .table-container { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background: var(--primary); color: white; }
+        tr:nth-child(even) { background-color: #fafafa; }
+        .obs-table th { background: #34495e; }
+
+        /* Full Width Images */
+        .img-container { width: 100%; background: #fff; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+        .img-container img { width: 100%; max-height: 500px; object-fit: contain; display: block; background: var(--light-grey); }
+        .image-error { padding: 20px; text-align: center; font-style: italic; color: #7f8c8d; }
+
+        /* Simulation Areas */
+        .sim-box { background: #fdfdfd; padding: 20px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        /* FIX: Changed height to auto and removed tight bounding boxes so wires don't get clipped */
+        .circuit-svg { width: 100%; max-width: 500px; height: auto; background: white; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 15px; }
+        
+        /* Controls */
+        .controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; flex-wrap: wrap; width: 100%; }
+        button { padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; background: var(--primary); transition: 0.2s; min-width: 140px; }
+        button:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        button.btn-danger { background: var(--danger); }
+        select { padding: 10px; border-radius: 4px; font-weight: bold; border: 1px solid #ccc; cursor: pointer; }
+
+        .btn-print { width: 100%; padding: 15px; font-size: 1.2rem; margin-top: 10px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+
+        /* Assembly Game Specifics */
+        .dnd-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 800px; margin-bottom: 15px; }
+        .asm-area { background: #e9ecef; border: 2px dashed #b2bec3; border-radius: 6px; padding: 15px; min-height: 250px; display: flex; flex-direction: column; gap: 10px; }
+        #drop-zone { flex-direction: column-reverse; justify-content: flex-start; } 
+        .drag-part { padding: 12px; text-align: center; font-weight: bold; color: white; background: var(--primary); border-radius: 4px; cursor: grab; user-select: none; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: 0.2s; }
+        .drag-part:active { cursor: grabbing; transform: scale(0.98); }
+        .drag-part:hover { filter: brightness(1.1); }
+
+        /* Persistent Calculation Log */
+        .calc-log-container { width: 100%; background: #e8f4f8; border-left: 5px solid var(--primary); padding: 15px; border-radius: 4px; margin-top: 15px; font-family: monospace; font-size: 0.95rem; box-sizing: border-box; }
+        .calc-entry { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #d1e5eb; }
+        .calc-entry:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+        @media (max-width: 600px) { .dnd-container { grid-template-columns: 1fr; } }
+        
+        /* Print Styles */
+        @media print { 
+            body { background: white; padding: 0; } 
+            section { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; } 
+            .no-print, button, select, .controls { display: none !important; } 
+            .sim-box { border: none; padding: 0; }
+            table { page-break-inside: auto; }
+            tr { page-break-inside: avoid; page-break-after: auto; }
+            .calc-log-container { display: block !important; border: 1px solid #ddd; background: #fff; color: #000; }
+        }
+    </style>
+</head>
+<body>
+
+<section>
+    <h2>1. Aim</h2>
+    <p>To identify the internal parts of an automatic electric iron, simulate assembling/disassembling, test components for healthy/faulty conditions, and carry out routine maintenance and troubleshooting.</p>
+</section>
+
+<section>
+    <h2>2. Requirements</h2>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr><th>Sr. No.</th><th>Tools / Instruments / Materials</th><th>Quantity</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>Automatic Electric Iron (Defective/Sample)</td><td>01 No.</td></tr>
+                <tr><td>2</td><td>Digital Multimeter</td><td>01 No.</td></tr>
+                <tr><td>3</td><td>Screwdriver Set & Spanner Set</td><td>01 Set each</td></tr>
+                <tr><td>4</td><td>Spare Heating Elements (Various Watts), Thermostat</td><td>As Required</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section>
+    <h2>3. Procedure</h2>
+    
+    <h3>(a) Parts and Assembling of Electric Iron</h3>
+    <div class="img-container">
+        <img src="1.jpg" alt="Parts of Electric Iron" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div class="image-error" style="display:none;">[Image not found: 1.jpg]</div>
+    </div>
+    <div class="sim-box">
+        <h4 class="no-print" style="margin: 0 0 10px 0; color: var(--primary);">Assembly Simulation Game</h4>
+        <p class="no-print" style="font-size: 0.9rem; text-align: center; margin-bottom: 15px;">Drag parts from the Bank to the Assembly Area, or simply <strong>click</strong> a part to place it. Assemble in correct physical order (Bottom to Top).</p>
+        
+        <div class="dnd-container no-print">
+            <div id="parts-bank" class="asm-area">
+                <h5 style="margin:0 0 10px 0; text-align:center;">Parts Bank</h5>
+                </div>
+            <div id="drop-zone" class="asm-area" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <h5 id="drop-text" style="margin:0; text-align:center; color:#7f8c8d; margin-top: auto; margin-bottom: auto;">Drop Parts Here</h5>
+            </div>
+        </div>
+        <div id="asm-status" class="no-print" style="font-weight: bold; color: var(--primary); margin-bottom: 15px;">Status: Awaiting First Part (Sole Plate)</div>
+        <button class="btn-danger no-print" onclick="initAssemblyGame()">Reset Assembly Game</button>
+    </div>
+
+    <h3>(b) Thermostat Continuity Testing</h3>
+    <div class="img-container">
+        <img src="2.jpg" alt="Thermostat Test" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div class="image-error" style="display:none;">[Image not found: 2.jpg]</div>
+    </div>
+    <div class="sim-box">
+        <svg viewBox="0 0 500 240" class="circuit-svg">
+            <rect x="30" y="30" width="120" height="150" rx="8" fill="#2d3436"/>
+            <rect x="45" y="45" width="90" height="40" rx="3" fill="#b2bec3"/>
+            <text id="mm1-screen" x="90" y="73" text-anchor="middle" font-family="monospace" font-size="22" font-weight="bold" fill="#000">---</text>
+            <rect x="230" y="40" width="240" height="120" rx="5" fill="#f1f2f6" stroke="#b2bec3" stroke-dasharray="4"/>
+            <text x="350" y="70" text-anchor="middle" font-size="14" font-weight="bold" fill="#34495e">THERMOSTAT</text>
+            
+            <path d="M 70 150 L 70 200 L 270 200 L 270 140" fill="none" stroke="#d63031" stroke-width="3"/>
+            <path d="M 110 150 L 110 220 L 430 220 L 430 140" fill="none" stroke="#2d3436" stroke-width="3"/>
+            
+            <circle cx="270" cy="140" r="5" fill="#d63031"/><circle cx="430" cy="140" r="5" fill="#2d3436"/>
+            
+            <circle cx="310" cy="140" r="4" fill="#2d3436"/><circle cx="390" cy="140" r="4" fill="#2d3436"/>
+            <line x1="270" y1="140" x2="310" y2="140" stroke="#2d3436" stroke-width="3"/>
+            <line x1="390" y1="140" x2="430" y2="140" stroke="#2d3436" stroke-width="3"/>
+            <line id="sim1-arm" x1="310" y1="140" x2="390" y2="110" stroke="#f39c12" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+        <div class="controls">
+            <button onclick="testThermo('Healthy')">Test Healthy (Closed)</button>
+            <button class="btn-danger" onclick="testThermo('Faulty')">Test Faulty (Stuck Open)</button>
+        </div>
+        <div class="table-container">
+            <table class="obs-table" id="obs-thermo">
+                <thead><tr><th>Sr. No.</th><th>Test Condition</th><th>Expected Reading</th><th>Measured Resistance</th><th>Status</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <h3>(c) Heating Element Continuity and Resistance Test</h3>
+    <div class="img-container">
+        <img src="3.jpg" alt="Heating Element Test" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div class="image-error" style="display:none;">[Image not found: 3.jpg]</div>
+    </div>
+    <div class="sim-box">
+        <svg viewBox="0 0 500 240" class="circuit-svg">
+            <rect x="30" y="30" width="120" height="150" rx="8" fill="#2d3436"/>
+            <rect x="45" y="45" width="90" height="40" rx="3" fill="#b2bec3"/>
+            <text id="mm2-screen" x="90" y="73" text-anchor="middle" font-family="monospace" font-size="22" font-weight="bold" fill="#000">---</text>
+            <rect x="230" y="40" width="240" height="120" rx="5" fill="#f1f2f6" stroke="#b2bec3" stroke-dasharray="4"/>
+            <text x="350" y="70" text-anchor="middle" font-size="14" font-weight="bold" fill="#34495e">HEATING ELEMENT</text>
+            
+            <path d="M 70 150 L 70 200 L 270 200 L 270 140" fill="none" stroke="#d63031" stroke-width="3"/>
+            <path d="M 110 150 L 110 220 L 430 220 L 430 140" fill="none" stroke="#2d3436" stroke-width="3"/>
+            
+            <circle cx="270" cy="140" r="5" fill="#d63031"/><circle cx="430" cy="140" r="5" fill="#2d3436"/>
+            
+            <polyline id="sim2-resistor" points="270,140 290,140 295,125 305,155 315,125 325,155 335,125 345,155 355,125 365,155 375,125 385,155 390,140 430,140" fill="none" stroke="#e67e22" stroke-width="4" stroke-linejoin="round"/>
+            <text id="sim2-break" x="350" y="145" text-anchor="middle" font-size="24" font-weight="bold" fill="#d63031" style="display:none;">X</text>
+        </svg>
+        <div class="controls">
+            <select id="heater-watt">
+                <option value="500">500 W Element</option>
+                <option value="750">750 W Element</option>
+                <option value="1000" selected>1000 W Element</option>
+                <option value="1200">1200 W Element</option>
+                <option value="burnt">Faulty / Burnt Element</option>
+            </select>
+            <button onclick="testHeater()">Probe Element & Calculate</button>
+        </div>
+        <div class="table-container">
+            <table class="obs-table" id="obs-heater">
+                <thead><tr><th>Sr. No.</th><th>Component</th><th>Calculated Res.</th><th>Measured Res.</th><th>Status</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        
+        <div class="calc-log-container">
+            <strong style="color:var(--primary);">Calculation History (Formula: R = V² / P, where V = 230V):</strong>
+            <div id="calc-entries" style="margin-top: 10px;">
+                <div style="color: #7f8c8d; font-style: italic;">No readings taken yet.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>4. Troubleshooting</h2>
+    <div class="table-container">
+        <table>
+            <thead><tr><th>Symptom / Fault</th><th>Possible Causes</th><th>Repair Action / Remedy</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Completely dead (No heat, no lamp)</strong></td><td>Defective supply cord; Blown thermal fuse; Loose terminal.</td><td>Check cord continuity. Bypass fuse temporarily to test; replace if faulty. Tighten screws.</td></tr>
+                <tr><td><strong>Lamp glows, iron does not heat</strong></td><td>Open circuit in heating element.</td><td>Test element continuity. If O.L, replace soleplate/element assembly.</td></tr>
+                <tr><td><strong>Electric shock to user</strong></td><td>Element shorted to sole plate (earth fault); Defective earthing.</td><td>Test resistance Live to Earth. Ensure earth pin is securely bolted to metallic body.</td></tr>
+                <tr><td><strong>Overheats and burns clothes</strong></td><td>Thermostat contacts welded; Bimetallic strip warped.</td><td>Test thermostat continuity. If closed (0.0Ω) at high heat, replace thermostat unit.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section>
+    <h2>5. Safety and Precautions</h2>
+    <ul>
+        <li>Disconnect the main power supply and allow the iron to cool before opening the casing.</li>
+        <li>Ensure the <strong>Earth (Green/Yellow)</strong> wire is securely bolted to the metallic body to prevent fatal shocks.</li>
+        <li>Never bypass the thermostat or thermal fuse permanently, as they prevent catastrophic fire hazards.</li>
+        <li>Perform an Earth Continuity test using a multimeter before plugging the repaired iron into the main socket.</li>
+    </ul>
+</section>
+
+<section>
+    <h2>6. Conclusion</h2>
+    <p>Components were successfully assembled, and continuity testing verified the inverse relationship between element wattage and resistance.<br>
+    Systematic troubleshooting confirmed that faults are diagnosed via open circuits, ensuring effective repair and safe operational standards.</p>
+</section>
+
+<button class="btn-print no-print" onclick="window.print()">🖨️ Print Lab Report</button>
+
+<script>
+    // ==========================================
+    // TASK 3(a): ASSEMBLY SIMULATION GAME
+    // ==========================================
+    const ironParts = [
+        { id: 1, name: '1. Sole Plate' },
+        { id: 2, name: '2. Heating Element & Mica' },
+        { id: 3, name: '3. Asbestos Sheet' },
+        { id: 4, name: '4. Pressure Plate' },
+        { id: 5, name: '5. Top Cover' },
+        { id: 6, name: '6. Handle & Sleeve' }
+    ];
+    let expectedId = 1;
+
+    function initAssemblyGame() {
+        const bank = document.getElementById('parts-bank');
+        bank.innerHTML = '<h5 style="margin:0 0 10px 0; text-align:center;">Parts Bank</h5>';
+        document.getElementById('drop-zone').innerHTML = '<h5 id="drop-text" style="margin:0; text-align:center; color:#7f8c8d; margin-top: auto; margin-bottom: auto;">Drop Parts Here</h5>';
+        
+        expectedId = 1;
+        document.getElementById('asm-status').innerText = "Status: Awaiting First Part (Sole Plate)";
+        document.getElementById('asm-status').style.color = "var(--primary)";
+
+        const shuffled = [...ironParts].sort(() => Math.random() - 0.5);
+        shuffled.forEach(part => {
+            const div = document.createElement('div');
+            div.className = 'drag-part';
+            div.id = `part-${part.id}`;
+            div.draggable = true;
+            div.ondragstart = dragStart;
+            div.onclick = function() { processAssembly(part.id, this); }; 
+            div.innerText = part.name.split('. ')[1]; 
+            bank.appendChild(div);
+        });
+    }
+
+    function dragStart(ev) { ev.dataTransfer.setData("text/plain", ev.target.id); }
+    function allowDrop(ev) { ev.preventDefault(); }
+    function drop(ev) {
+        ev.preventDefault();
+        const dataId = ev.dataTransfer.getData("text/plain");
+        if(!dataId) return;
+        const partNumber = parseInt(dataId.split('-')[1]);
+        processAssembly(partNumber, document.getElementById(dataId));
+    }
+
+    function processAssembly(partId, element) {
+        const status = document.getElementById('asm-status');
+        if (partId === expectedId) {
+            document.getElementById('drop-zone').appendChild(element);
+            element.draggable = false;
+            element.onclick = null;
+            element.style.cursor = 'default';
+            
+            const dropText = document.getElementById('drop-text');
+            if(dropText) dropText.style.display = 'none';
+            
+            expectedId++;
+            if (expectedId > 6) {
+                status.innerText = "Status: Iron Assembled Successfully! ✓";
+                status.style.color = "var(--success)";
+            } else {
+                status.innerText = "Status: Correct! Place the next part.";
+                status.style.color = "var(--success)";
+            }
+        } else {
+            status.innerText = "Status: Incorrect Part! Assemble from bottom to top.";
+            status.style.color = "var(--danger)";
+        }
+    }
+
+    // ==========================================
+    // TASK 3(b): THERMOSTAT TESTING
+    // ==========================================
+    let tSr = 1;
+    function testThermo(cond) {
+        const screen = document.getElementById('mm1-screen');
+        const arm = document.getElementById('sim1-arm');
+        const tbody = document.querySelector('#obs-thermo tbody');
+        
+        screen.style.opacity = '0';
+        setTimeout(() => { screen.style.opacity = '1'; }, 100);
+
+        let resStr = '', statusStr = '';
+        if (cond === 'Healthy') {
+            resStr = '0.0 Ω'; statusStr = 'Pass ✓';
+            screen.setAttribute('fill', '#27ae60');
+            arm.setAttribute('y2', '140'); // Closed - touches y=140
+        } else {
+            resStr = 'O.L'; statusStr = 'Fail (Open) ✗';
+            screen.setAttribute('fill', '#d63031');
+            arm.setAttribute('y2', '110'); // Open - bent upwards
+        }
+        
+        screen.textContent = resStr;
+        tbody.innerHTML += `<tr><td>${tSr++}</td><td>${cond} Thermostat</td><td>0.0 Ω</td><td>${resStr}</td><td style="color:${cond==='Healthy'?'var(--success)':'var(--danger)'};font-weight:bold;">${statusStr}</td></tr>`;
+    }
+
+    // ==========================================
+    // TASK 3(c): HEATING ELEMENT TESTING & CALCULATION
+    // ==========================================
+    let hSr = 1;
+    function testHeater() {
+        const watt = document.getElementById('heater-watt').value;
+        const screen = document.getElementById('mm2-screen');
+        const resLine = document.getElementById('sim2-resistor');
+        const breakX = document.getElementById('sim2-break');
+        
+        const tbody = document.querySelector('#obs-heater tbody');
+        const calcEntries = document.getElementById('calc-entries');
+
+        screen.style.opacity = '0';
+        setTimeout(() => { screen.style.opacity = '1'; }, 100);
+
+        let resStr = '', expStr = '', statusStr = '', compName = '', calcHtml = '';
+
+        if(hSr === 1) calcEntries.innerHTML = ''; // Clear placeholder message
+
+        if(watt === 'burnt') {
+            compName = 'Unknown (Burnt)'; expStr = 'N/A'; resStr = 'O.L'; statusStr = 'Fail (Burnt) ✗';
+            screen.setAttribute('fill', '#d63031');
+            resLine.setAttribute('stroke', '#ccc'); 
+            breakX.style.display = 'block';
+            calcHtml = `<div class="calc-entry"><strong>Sr. No. ${hSr} (Burnt Element):</strong> Cannot calculate resistance. Element is burnt and circuit is broken (Open Loop).</div>`;
+        } else {
+            compName = `${watt} W Element`;
+            const calcR = ((230 * 230) / parseInt(watt)).toFixed(1);
+            expStr = `${calcR} Ω`;
+            
+            // Add tiny randomness to simulate a real reading (+/- 0.5 ohms)
+            const measuredR = (parseFloat(calcR) + (Math.random() * 1.0 - 0.5)).toFixed(1);
+            resStr = `${measuredR} Ω`; statusStr = 'Pass ✓';
+            
+            screen.setAttribute('fill', '#27ae60');
+            resLine.setAttribute('stroke', '#e67e22');
+            breakX.style.display = 'none';
+
+            calcHtml = `<div class="calc-entry"><strong>Sr. No. ${hSr} (${watt} W Element):</strong> R = (230)² / ${watt} &rarr; 52900 / ${watt} = <strong>${calcR} Ω</strong></div>`;
+        }
+
+        screen.textContent = resStr;
+        tbody.innerHTML += `<tr><td>${hSr}</td><td>${compName}</td><td>${expStr}</td><td>${resStr}</td><td style="color:${watt==='burnt'?'var(--danger)':'var(--success)'};font-weight:bold;">${statusStr}</td></tr>`;
+        calcEntries.innerHTML += calcHtml; // Persist calculation history
+        
+        hSr++;
+    }
+
+    // Run on load
+    window.onload = initAssemblyGame;
+</script>
+</body>
+</html>
